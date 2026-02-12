@@ -1,0 +1,19 @@
+{
+  "name": "deskops-web",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite dev --host 127.0.0.1 --port 8888",
+    "build": "vite build",
+    "preview": "vite preview --host 127.0.0.1 --port 8888"
+  },
+  "devDependencies": {
+    "@sveltejs/adapter-auto": "^3.2.5",
+    "@sveltejs/kit": "^2.11.0",
+    "@sveltejs/vite-plugin-svelte": "^3.1.2",
+    "svelte": "^4.2.19",
+    "typescript": "^5.6.3",
+    "vite": "^5.4.11"
+  }
+}
