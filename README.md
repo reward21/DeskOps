@@ -33,7 +33,7 @@ set +a
 ### Go API
 
 ```bash
-cd /Users/cole/Projects/gulfchain/DeskOps/apps/api
+cd apps/api
 go mod tidy
 go run ./cmd/server
 ```
@@ -41,7 +41,7 @@ go run ./cmd/server
 ### FastAPI
 
 ```bash
-cd /Users/cole/Projects/gulfchain/DeskOps/services/fastapi
+cd services/fastapi
 python3 -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
@@ -51,15 +51,17 @@ uvicorn app.main:app --reload --host 127.0.0.1 --port 8090
 ### SvelteKit
 
 ```bash
-cd /Users/cole/Projects/gulfchain/DeskOps/apps/web
+cd apps/web
 npm install
 npm run dev -- --host 127.0.0.1 --port 8888
 ```
 
+The UI uses same-origin proxies (`/api/...` and `/api/fastapi/...`), so it works cleanly across LAN devices without CORS issues. Make sure the Go API and FastAPI are running.
+
 ## Import backtest data (SQLite -> Postgres)
 
 ```bash
-cd /Users/cole/Projects/gulfchain/DeskOps/services/fastapi
+cd services/fastapi
 source .venv/bin/activate
 python -m app.import_backtest --sqlite "$BACKTEST_SQLITE_PATH" --pg "$DATABASE_URL"
 ```

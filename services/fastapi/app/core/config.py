@@ -6,8 +6,8 @@ class Settings(BaseSettings):
 
     app_name: str = "DeskOps-FastAPI"
     fastapi_port: int = 8090
-    database_url: str = "postgres://cole@127.0.0.1:5432/deskops?sslmode=disable"
-    backtest_sqlite_path: str = "/Users/cole/Projects/gulfchain/multigate-backtest/runs/backtests.sqlite"
+    database_url: str = "postgres://postgres@127.0.0.1:5432/deskops?sslmode=disable"
+    backtest_sqlite_path: str = "/data/backtests.sqlite"
 
 
 settings = Settings()

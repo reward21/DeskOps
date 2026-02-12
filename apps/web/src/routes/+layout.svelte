@@ -8,8 +8,8 @@
   let theme = 'dark';
   let llmRead = true;
   let llmWrite = false;
-  const logoDarkSrc = '/logo-dark.png';
-  const logoLightSrc = '/logo-light.png';
+  const logoDarkSrc = '/gulfchain2.png';
+  const logoLightSrc = '/gulfchain1.png';
 
   const toggleTheme = () => {
     theme = theme === 'dark' ? 'light' : 'dark';
