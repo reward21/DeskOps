@@ -8,7 +8,8 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
     ports:
-      - "5432:5432"
+      # Default PostgreSQL port is 5432, but you can override the host port via PGPORT in .env
+      - "${PGPORT:-5432}:5432"
     volumes:
       - deskops_pg:/var/lib/postgresql/data
       - ./db/migrations:/docker-entrypoint-initdb.d:ro
@@ -23,7 +24,7 @@ services:
       context: .
       dockerfile: docker/api.Dockerfile
     environment:
-      DATABASE_URL: postgres://postgres:postgres@db:5432/deskops?sslmode=disable
+      DATABASE_URL: ${DOCKER_DATABASE_URL:-postgres://postgres:postgres@db:5432/deskops?sslmode=disable}
       API_PORT: 9090
     ports:
       - "9090:9090"
@@ -37,7 +38,7 @@ services:
       context: .
       dockerfile: docker/fastapi.Dockerfile
     environment:
-      DATABASE_URL: postgres://postgres:postgres@db:5432/deskops?sslmode=disable
+      DATABASE_URL: ${DOCKER_DATABASE_URL:-postgres://postgres:postgres@db:5432/deskops?sslmode=disable}
       BACKTEST_SQLITE_PATH: /data/backtests.sqlite
     volumes:
       - deskops_fastapi_data:/data

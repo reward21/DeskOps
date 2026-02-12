@@ -40,7 +40,7 @@ Direct service ports still work for tooling and scripts:
 - Web UI: http://localhost:8888
 - Go API: http://localhost:9090
 - FastAPI: http://localhost:8090
-- Postgres: localhost:5432
+- Postgres: localhost:5433
 
 ## Backtest SQLite (Optional)
 
