@@ -4,31 +4,43 @@
   export let theme = 'dark';
   export let logoDarkSrc = '';
   export let logoLightSrc = '';
+  let logoFailed = false;
 
   $: logoSrc = theme === 'dark' ? logoDarkSrc : logoLightSrc;
+  $: logoFailed = false;
+
+  const handleLogoError = () => {
+    logoFailed = true;
+  };
 </script>
 
 <nav class="nav">
   <div class="brand">
-    {#if logoSrc}
-      <img class="logo-img" src={logoSrc} alt="DeskOps logo" />
+    <div class="brand-main">
+      <div class="logo">DeskOps</div>
+    {#if logoSrc && !logoFailed}
+      <div class="logo-wrap">
+        <img class="logo-img" src={logoSrc} alt="DeskOps logo" on:error={handleLogoError} />
+      </div>
     {/if}
-    <div class="logo">DeskOps</div>
+    </div>
     <div class="tag">Gulfchain Systems Engineering</div>
   </div>
-  <button class="menu" on:click={onToggle} aria-label="Toggle menu">
-    <span></span>
-    <span></span>
-    <span></span>
-  </button>
-  <div class:open class="links">
-    <a href="/">Home</a>
-    <a href="/console">Console</a>
-    <a href="/backtest">Backtest</a>
-    <a href="/gulf-sync">GulfSync</a>
-    <a href="/charts">Charts</a>
-    <a href="/communities">Communities</a>
-    <a href="/docs">Docs</a>
+  <div class="nav-actions">
+    <button class="menu" on:click={onToggle} aria-label="Toggle menu">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+    <div class:open class="links">
+      <a href="/">Home</a>
+      <a href="/console">Console</a>
+      <a href="/backtest">Backtest</a>
+      <a href="/gulf-sync">GulfSync</a>
+      <a href="/charts">Charts</a>
+      <a href="/communities">Communities</a>
+      <a href="/docs">Docs</a>
+    </div>
   </div>
 </nav>
 
@@ -50,29 +62,54 @@
   .brand {
     display: grid;
     gap: 0.15rem;
+    min-width: 0;
+  }
+
+  .brand-main {
+    display: flex;
     align-items: center;
+    gap: 0.6rem;
   }
 
   .logo {
     font-family: 'Space Mono', monospace;
     font-size: 1.25rem;
+    line-height: 1.1;
     letter-spacing: 0.12em;
-    color: var(--text);
+    color: var(--nav-text);
   }
 
   .tag {
     font-size: 0.75rem;
-    color: var(--text-muted);
+    line-height: 1.2;
+    color: var(--nav-muted);
+  }
+
+  .logo-wrap {
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: var(--surface-alt);
+    box-sizing: border-box;
+    flex: 0 0 36px;
   }
 
   .logo-img {
-    width: 34px;
-    height: 34px;
-    border-radius: 10px;
+    width: 80%;
+    height: 80%;
     object-fit: contain;
-    border: 1px solid var(--border);
-    background: var(--surface-alt);
-    padding: 4px;
+    display: block;
+  }
+
+  .nav-actions {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    position: relative;
   }
 
   .menu {
@@ -118,8 +155,8 @@
 
     .links {
       position: absolute;
-      top: 64px;
-      right: 1.5rem;
+      top: 54px;
+      right: 0;
       flex-direction: column;
       background: var(--surface);
       border: 1px solid var(--border);

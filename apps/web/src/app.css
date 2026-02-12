@@ -12,6 +12,8 @@
   --accent: #00acac;
   --border: #2a2a2a;
   --shadow: rgba(0, 0, 0, 0.4);
+  --nav-text: #dfdedc;
+  --nav-muted: #a6a7a2;
 }
 
 [data-theme='light'] {
@@ -26,6 +28,8 @@
   --accent: #008f8f;
   --border: #c8c6c3;
   --shadow: rgba(0, 0, 0, 0.15);
+  --nav-text: #0b0b0b;
+  --nav-muted: #2f2f2f;
 }
 
 * {
