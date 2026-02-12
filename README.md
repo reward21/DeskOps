@@ -22,6 +22,8 @@ docker compose up --build
 
 That brings up all services.
 
+The UI uses same-origin proxies (`/api/...` and `/api/fastapi/...`), so it works cleanly across LAN devices without CORS issues.
+
 ## Ports
 
 - Web UI: http://localhost:8888
@@ -31,13 +33,18 @@ That brings up all services.
 
 ## Backtest SQLite (Optional)
 
-FastAPI can read the Multigate backtest SQLite file if you mount it. Set `BACKTEST_SQLITE_PATH` in your environment before starting Docker:
+FastAPI can read the Multigate backtest SQLite file if you mount it. By default, the container uses an internal `/data/backtests.sqlite` path.
 
-```bash
-export BACKTEST_SQLITE_PATH=/Users/cole/Projects/gulfchain/multigate-backtest/runs/backtests.sqlite
+To bind your local file, create a `docker-compose.override.yml` next to the main compose file:
+
+```yaml
+services:
+  fastapi:
+    volumes:
+      - /absolute/path/to/backtests.sqlite:/data/backtests.sqlite:ro
 ```
 
-If not set, the container will still run, but backtest import endpoints won’t have access to the SQLite file.
+If you don’t mount anything, the container still runs; backtest import endpoints just won’t have real data.
 
 ## Common Commands
 

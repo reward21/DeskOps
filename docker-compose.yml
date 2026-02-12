@@ -11,6 +11,7 @@ services:
       - "5432:5432"
     volumes:
       - deskops_pg:/var/lib/postgresql/data
+      - ./db/migrations:/docker-entrypoint-initdb.d:ro
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres -d deskops"]
       interval: 5s
@@ -39,7 +40,7 @@ services:
       DATABASE_URL: postgres://postgres:postgres@db:5432/deskops?sslmode=disable
       BACKTEST_SQLITE_PATH: /data/backtests.sqlite
     volumes:
-      - ${BACKTEST_SQLITE_PATH:-/Users/cole/Projects/gulfchain/multigate-backtest/runs/backtests.sqlite}:/data/backtests.sqlite:ro
+      - deskops_fastapi_data:/data
     ports:
       - "8090:8090"
     depends_on:
@@ -52,6 +53,8 @@ services:
       context: .
       dockerfile: docker/web.Dockerfile
     environment:
+      API_BASE_URL: http://api:9090
+      FASTAPI_BASE_URL: http://fastapi:8090
       VITE_API_BASE_URL: http://localhost:9090
       VITE_FASTAPI_BASE_URL: http://localhost:8090
     ports:
@@ -63,3 +66,4 @@ services:
 
 volumes:
   deskops_pg:
+  deskops_fastapi_data:
