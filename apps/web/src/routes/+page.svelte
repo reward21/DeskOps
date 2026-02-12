@@ -1,6 +1,6 @@
 <section class="hero">
   <div class="copy">
-    <p class="eyebrow">DeskOps</p>
+    <p class="eyebrow"><span class="drop">D</span>esk<span class="drop">O</span>ps</p>
     <h1>Unified command surface for GulfChain.</h1>
     <p class="lead">
       Console-first workflow for backtests, governance, and local AI. Built for precise control and
@@ -41,6 +41,10 @@
     letter-spacing: 0.3em;
     text-transform: uppercase;
     color: var(--accent);
+  }
+
+  .drop {
+    font-size: 1.25em;
   }
 
   h1 {
