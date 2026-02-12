@@ -1,95 +1,66 @@
-# DeskOps
+# DeskOps (Docker)
 
-Source-first control console for GulfChain.
+DeskOps is the unified console for GulfChain. This branch is the **Docker-first** setup for sharing and running the full stack quickly.
 
-## Structure
+## What’s Included
 
-- `apps/web` SvelteKit UI (port 8888)
-- `apps/api` Go API (port 9090)
-- `services/fastapi` Python service (port 8090)
-- `db/` Postgres migrations
-- `docs/` architecture notes
+- `web` SvelteKit UI
+- `api` Go backend
+- `fastapi` Python service (data/LLM/analytics)
+- `db` Postgres database
 
 ## Requirements
 
-- Postgres running locally
-- Node 18+ (for SvelteKit)
-- Go 1.22+
-- Python 3.11+
+- Docker Desktop
+- Optional: a local backtest SQLite file (for FastAPI ingestion)
 
-## Environment
-
-Create `.env` in repo root:
-
-```bash
-cp .env.example .env
-set -a
-source .env
-set +a
-```
-
-## Start services (source-first)
-
-### Go API
-
-```bash
-cd /Users/cole/Projects/gulfchain/DeskOps/apps/api
-go mod tidy
-go run ./cmd/server
-```
-
-### FastAPI
-
-```bash
-cd /Users/cole/Projects/gulfchain/DeskOps/services/fastapi
-python3 -m venv .venv
-source .venv/bin/activate
-pip install -r requirements.txt
-uvicorn app.main:app --reload --host 127.0.0.1 --port 8090
-```
-
-### SvelteKit
-
-```bash
-cd /Users/cole/Projects/gulfchain/DeskOps/apps/web
-npm install
-npm run dev -- --host 127.0.0.1 --port 8888
-```
-
-## Import backtest data (SQLite -> Postgres)
-
-```bash
-cd /Users/cole/Projects/gulfchain/DeskOps/services/fastapi
-source .venv/bin/activate
-python -m app.import_backtest --sqlite "$BACKTEST_SQLITE_PATH" --pg "$DATABASE_URL"
-```
-
-Notes:
-- Imports only backtest tables. Market data files are not touched.
-- SQLite file is read-only; nothing is deleted.
-
-## Pages
-
-- `/` Landing
-- `/console` Console & dashboard
-- `/backtest` Multigate backtest
-- `/gulf-sync` GulfSync governance
-- `/communities` Communities & socials
-- `/docs` Development/docs
-- `/charts` Charts/market data
-
-## Docker branch (deskops-docker)
-
-This section applies only to the `deskops-docker` branch.
+## Quick Start
 
 ```bash
 docker compose up --build
 ```
 
-Ports:
-- Web: http://localhost:8888
+That brings up all services.
+
+## Ports
+
+- Web UI: http://localhost:8888
 - Go API: http://localhost:9090
 - FastAPI: http://localhost:8090
 - Postgres: localhost:5432
 
-Note: the Docker setup mounts the backtest SQLite file read-only into the FastAPI container.
+## Backtest SQLite (Optional)
+
+FastAPI can read the Multigate backtest SQLite file if you mount it. Set `BACKTEST_SQLITE_PATH` in your environment before starting Docker:
+
+```bash
+export BACKTEST_SQLITE_PATH=/Users/cole/Projects/gulfchain/multigate-backtest/runs/backtests.sqlite
+```
+
+If not set, the container will still run, but backtest import endpoints won’t have access to the SQLite file.
+
+## Common Commands
+
+Start services (detached):
+```bash
+docker compose up -d
+```
+
+Rebuild a service:
+```bash
+docker compose build web
+```
+
+Stop services:
+```bash
+docker compose down
+```
+
+## Troubleshooting
+
+- If a service doesn’t appear in Docker Desktop, it likely wasn’t started. Run `docker compose up -d`.
+- If FastAPI won’t start, check that `BACKTEST_SQLITE_PATH` points to a real file.
+
+---
+
+This README applies to the `deskops-docker` branch only.
