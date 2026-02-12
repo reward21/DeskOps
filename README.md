@@ -24,6 +24,17 @@ That brings up all services.
 
 The UI uses same-origin proxies (`/api/...` and `/api/fastapi/...`), so it works cleanly across LAN devices without CORS issues.
 
+### API Access
+
+The UI talks to the backend through these same-origin routes:
+
+- `http://localhost:8888/api/backtests/runs` → Go API (`/v1/backtests/runs`)
+- `http://localhost:8888/api/fastapi/*` → FastAPI
+
+Direct service ports still work for tooling and scripts:
+- Go API: `http://localhost:9090`
+- FastAPI: `http://localhost:8090`
+
 ## Ports
 
 - Web UI: http://localhost:8888
@@ -66,7 +77,8 @@ docker compose down
 ## Troubleshooting
 
 - If a service doesn’t appear in Docker Desktop, it likely wasn’t started. Run `docker compose up -d`.
-- If FastAPI won’t start, check that `BACKTEST_SQLITE_PATH` points to a real file.
+- If FastAPI won’t start, check your `docker-compose.override.yml` path.
+- Fresh clones auto-run migrations on first boot; if you delete volumes, the DB is re-initialized.
 
 ---
 
