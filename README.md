@@ -16,6 +16,7 @@ Source-first control console for GulfChain.
 - Node 18+ (for SvelteKit)
 - Go 1.22+
 - Python 3.11+
+- psql client (`brew install postgresql@16` or `brew install libpq` + PATH)
 
 ## Environment
 
