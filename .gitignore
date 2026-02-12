@@ -28,14 +28,24 @@ go.work.sum
 .env
 .envrc
 .venv
-venv
+/venv
+
+# Python
+__pycache__/
+*.pyc
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Node/Svelte
+node_modules/
+dist/
+.svelte-kit/
+.vite/
+
+# OS
+.DS_Store
 
 # Editor/IDE
 # .idea/
 # .vscode/
-
-# -------------------------
-# macOS
-# -------------------------
-.DS_Store
-**/.DS_Store

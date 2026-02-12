@@ -11,6 +11,11 @@ services:
       - "5432:5432"
     volumes:
       - deskops_pg:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d deskops"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
 
   api:
     build:
@@ -22,7 +27,9 @@ services:
     ports:
       - "9090:9090"
     depends_on:
-      - db
+      db:
+        condition: service_healthy
+    restart: unless-stopped
 
   fastapi:
     build:
@@ -36,7 +43,9 @@ services:
     ports:
       - "8090:8090"
     depends_on:
-      - db
+      db:
+        condition: service_healthy
+    restart: unless-stopped
 
   web:
     build:
@@ -48,7 +57,9 @@ services:
     ports:
       - "8888:8888"
     depends_on:
-      - api
+      api:
+        condition: service_started
+    restart: unless-stopped
 
 volumes:
   deskops_pg:
