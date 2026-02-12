@@ -1,0 +1,191 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+RUN_DIR="$ROOT/.run"
+
+load_env() {
+  if [[ -f "$ROOT/.env" ]]; then
+    set -a
+    # shellcheck disable=SC1091
+    . "$ROOT/.env"
+    set +a
+  fi
+}
+
+ensure_run_dir() {
+  mkdir -p "$RUN_DIR"
+}
+
+pid_file() {
+  echo "$RUN_DIR/$1.pid"
+}
+
+log_file() {
+  echo "$RUN_DIR/$1.log"
+}
+
+is_running() {
+  local pidfile
+  pidfile="$(pid_file "$1")"
+  [[ -f "$pidfile" ]] && kill -0 "$(cat "$pidfile")" 2>/dev/null
+}
+
+start_service() {
+  local name="$1"
+  local workdir="$2"
+  local cmd="$3"
+  local pidfile logfile
+  pidfile="$(pid_file "$name")"
+  logfile="$(log_file "$name")"
+
+  if is_running "$name"; then
+    echo "$name already running (pid $(cat "$pidfile"))."
+    return
+  fi
+
+  ensure_run_dir
+  echo "Starting $name..."
+  (
+    cd "$workdir"
+    nohup bash -c "$cmd" >>"$logfile" 2>&1 &
+    echo $! >"$pidfile"
+  )
+}
+
+stop_service() {
+  local name="$1"
+  local pidfile
+  pidfile="$(pid_file "$name")"
+  if [[ -f "$pidfile" ]]; then
+    local pid
+    pid="$(cat "$pidfile")"
+    if kill -0 "$pid" 2>/dev/null; then
+      echo "Stopping $name (pid $pid)..."
+      kill "$pid" || true
+    fi
+    rm -f "$pidfile"
+  else
+    echo "$name not running."
+  fi
+}
+
+status_service() {
+  if is_running "$1"; then
+    echo "$1: running (pid $(cat "$(pid_file "$1")"))"
+  else
+    echo "$1: stopped"
+  fi
+}
+
+check_db() {
+  if command -v pg_isready >/dev/null 2>&1; then
+    if ! pg_isready >/dev/null 2>&1; then
+      echo "Postgres not ready. Start it first, then run ./deskops up."
+      return 1
+    fi
+  else
+    echo "pg_isready not found; skipping DB readiness check."
+  fi
+  return 0
+}
+
+migrate_db() {
+  load_env
+  if [[ -z "${DATABASE_URL:-}" ]]; then
+    echo "DATABASE_URL is required for migrations."
+    return 1
+  fi
+  if ! command -v psql >/dev/null 2>&1; then
+    echo "psql not found. Install Postgres client tools first."
+    return 1
+  fi
+  psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f "$ROOT/db/migrations/0001_init.sql"
+  psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f "$ROOT/db/migrations/0002_views.sql"
+}
+
+reset_db() {
+  load_env
+  if [[ -z "${DATABASE_URL:-}" ]]; then
+    echo "DATABASE_URL is required to reset the database."
+    return 1
+  fi
+  if ! command -v psql >/dev/null 2>&1; then
+    echo "psql not found. Install Postgres client tools first."
+    return 1
+  fi
+  local db_url db_name base admin_url
+  db_url="$DATABASE_URL"
+  db_name="${db_url##*/}"
+  db_name="${db_name%%\?*}"
+  base="${db_url%/*}"
+  admin_url="${base}/postgres"
+  psql "$admin_url" -v ON_ERROR_STOP=1 -c "DROP DATABASE IF EXISTS \"$db_name\";"
+  psql "$admin_url" -v ON_ERROR_STOP=1 -c "CREATE DATABASE \"$db_name\";"
+  migrate_db
+}
+
+case "${1:-up}" in
+  setup)
+    (cd "$ROOT/apps/api" && go mod tidy)
+    (cd "$ROOT/services/fastapi" && python3 -m venv .venv && . .venv/bin/activate && pip install -r requirements.txt)
+    (cd "$ROOT/apps/web" && npm install)
+    ;;
+  up)
+    load_env
+    check_db || true
+    start_service "api" "$ROOT/apps/api" "go run ./cmd/server"
+    start_service "fastapi" "$ROOT/services/fastapi" ". .venv/bin/activate && uvicorn app.main:app --reload --host 127.0.0.1 --port 8090"
+    start_service "web" "$ROOT/apps/web" "npm run dev -- --host 127.0.0.1 --port 8888"
+    echo "Logs: $RUN_DIR/*.log"
+    ;;
+  down)
+    stop_service "web"
+    stop_service "fastapi"
+    stop_service "api"
+    ;;
+  restart)
+    "$0" down
+    "$0" up
+    ;;
+  logs)
+    ensure_run_dir
+    tail -n 200 -f "$RUN_DIR"/*.log
+    ;;
+  status)
+    status_service "api"
+    status_service "fastapi"
+    status_service "web"
+    ;;
+  migrate)
+    migrate_db
+    ;;
+  clean)
+    rm -rf "$RUN_DIR" \
+      "$ROOT/apps/web/.svelte-kit" \
+      "$ROOT/apps/web/.vite" \
+      "$ROOT/apps/web/dist" \
+      "$ROOT/services/fastapi/__pycache__"
+    ;;
+  reset)
+    echo "HARD RESET OF ENTIRE DESKOPS APPLICATION, DATA WILL BE LOST!"
+    read -r -p "Type Y to continue: " confirm
+    if [[ "$confirm" != "Y" ]]; then
+      echo "Aborted."
+      exit 1
+    fi
+    "$0" down || true
+    rm -rf "$RUN_DIR" \
+      "$ROOT/apps/web/node_modules" \
+      "$ROOT/apps/web/.svelte-kit" \
+      "$ROOT/apps/web/.vite" \
+      "$ROOT/apps/web/dist" \
+      "$ROOT/services/fastapi/.venv" \
+      "$ROOT/services/fastapi/__pycache__"
+    reset_db || true
+    ;;
+  *)
+    echo "Usage: ./deskops [setup|up|down|restart|logs|status|migrate|clean|reset]"
+    exit 1
+    ;;
+esac

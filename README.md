@@ -30,6 +30,20 @@ set +a
 
 ## Start services (source-first)
 
+### Quick start (after setup)
+
+```bash
+./deskops
+```
+
+### Make targets
+
+```bash
+make setup
+make up
+make logs
+```
+
 ### Go API
 
 ```bash

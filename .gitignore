@@ -29,6 +29,7 @@ go.work.sum
 .envrc
 .venv
 /venv
+.run
 
 # Python
 __pycache__/
