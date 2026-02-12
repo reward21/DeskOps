@@ -3,6 +3,8 @@
 :root {
   color-scheme: dark;
   --bg: #070707;
+  --bg-accent: #0f1a1c;
+  --bg-deep: #000000;
   --surface: #111111;
   --surface-alt: #1a1a1a;
   --text: #dfdedc;
@@ -15,6 +17,8 @@
 [data-theme='light'] {
   color-scheme: light;
   --bg: #dfdedc;
+  --bg-accent: #f6f4f3;
+  --bg-deep: #cfcac6;
   --surface: #f6f4f3;
   --surface-alt: #e9e6e3;
   --text: #111111;
@@ -31,7 +35,7 @@
 body {
   margin: 0;
   font-family: 'Space Grotesk', sans-serif;
-  background: radial-gradient(circle at top left, #0f1a1c 0%, var(--bg) 45%, #000000 100%);
+  background: radial-gradient(circle at top left, var(--bg-accent) 0%, var(--bg) 45%, var(--bg-deep) 100%);
   color: var(--text);
 }
 

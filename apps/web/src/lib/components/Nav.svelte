@@ -1,12 +1,20 @@
-<script lang="ts">
+<script>
   export let open = false;
-  export let onToggle: () => void;
+  export let onToggle;
+  export let theme = 'dark';
+  export let logoDarkSrc = '';
+  export let logoLightSrc = '';
+
+  $: logoSrc = theme === 'dark' ? logoDarkSrc : logoLightSrc;
 </script>
 
 <nav class="nav">
   <div class="brand">
+    {#if logoSrc}
+      <img class="logo-img" src={logoSrc} alt="DeskOps logo" />
+    {/if}
     <div class="logo">DeskOps</div>
-    <div class="tag">GulfChain Unified Console</div>
+    <div class="tag">Gulfchain Systems Engineering</div>
   </div>
   <button class="menu" on:click={onToggle} aria-label="Toggle menu">
     <span></span>
@@ -33,24 +41,38 @@
     align-items: center;
     justify-content: space-between;
     padding: 1rem 1.5rem;
-    background: rgba(7, 7, 7, 0.9);
+    background: var(--surface);
     backdrop-filter: blur(10px);
     border-bottom: 1px solid var(--border);
+    color: var(--text);
   }
 
   .brand {
     display: grid;
+    gap: 0.15rem;
+    align-items: center;
   }
 
   .logo {
     font-family: 'Space Mono', monospace;
     font-size: 1.25rem;
     letter-spacing: 0.12em;
+    color: var(--text);
   }
 
   .tag {
     font-size: 0.75rem;
     color: var(--text-muted);
+  }
+
+  .logo-img {
+    width: 34px;
+    height: 34px;
+    border-radius: 10px;
+    object-fit: contain;
+    border: 1px solid var(--border);
+    background: var(--surface-alt);
+    padding: 4px;
   }
 
   .menu {
@@ -81,6 +103,7 @@
   .links a {
     padding-bottom: 0.2rem;
     border-bottom: 1px solid transparent;
+    color: var(--text);
   }
 
   .links a:hover {

@@ -1,7 +1,7 @@
 <script>
   import { onMount } from 'svelte';
   import LLMPanel from '$lib/components/LLMPanel.svelte';
-  import { fetchRuns } from '$lib/api';
+  import { fetchRuns } from '$lib/api.js';
 
   let runs = [];
   let loading = true;

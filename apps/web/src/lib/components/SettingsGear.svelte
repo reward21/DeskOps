@@ -1,26 +1,44 @@
-<script lang="ts">
-  export let theme: 'dark' | 'light' = 'dark';
-  export let onToggleTheme: () => void;
+<script>
+  export let theme = 'dark';
+  export let onToggleTheme;
   export let llmRead = true;
   export let llmWrite = false;
+
+  let open = false;
+  let root;
+
+  const togglePanel = () => {
+    open = !open;
+  };
+
+  const handleWindowClick = (event) => {
+    if (!open || !root) return;
+    if (!root.contains(event.target)) {
+      open = false;
+    }
+  };
 </script>
 
-<div class="gear">
-  <button class="gear-btn" title="Settings">⚙</button>
-  <div class="panel">
-    <div class="row">
-      <span>Theme</span>
-      <button on:click={onToggleTheme}>{theme === 'dark' ? 'Dark' : 'Light'}</button>
+<svelte:window on:click={handleWindowClick} />
+
+<div class="gear" bind:this={root}>
+  <button class="gear-btn" title="Settings" on:click|stopPropagation={togglePanel}>⚙</button>
+  {#if open}
+    <div class="panel">
+      <div class="row">
+        <span>Theme</span>
+        <button on:click={onToggleTheme}>{theme === 'dark' ? 'Dark' : 'Light'}</button>
+      </div>
+      <div class="row">
+        <span>LLM Read</span>
+        <input type="checkbox" bind:checked={llmRead} />
+      </div>
+      <div class="row">
+        <span>LLM Write</span>
+        <input type="checkbox" bind:checked={llmWrite} />
+      </div>
     </div>
-    <div class="row">
-      <span>LLM Read</span>
-      <input type="checkbox" bind:checked={llmRead} />
-    </div>
-    <div class="row">
-      <span>LLM Write</span>
-      <input type="checkbox" bind:checked={llmWrite} />
-    </div>
-  </div>
+  {/if}
 </div>
 
 <style>
