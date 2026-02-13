@@ -3,14 +3,11 @@ set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 RUN_DIR="$ROOT/.run"
+PY_VERSION_REQUIRED="3.11"
 
 load_env() {
-  if [[ -f "$ROOT/.env" ]]; then
-    set -a
-    # shellcheck disable=SC1091
-    . "$ROOT/.env"
-    set +a
-  fi
+  # Environment is expected to be provided by direnv (.envrc).
+  :
 }
 
 ensure_run_dir() {
@@ -78,6 +75,231 @@ status_service() {
   fi
 }
 
+require_cmd() {
+  local name="$1"
+  if ! command -v "$name" >/dev/null 2>&1; then
+    echo "Missing required command: $name"
+    return 1
+  fi
+  return 0
+}
+
+check_node() {
+  local vite_bin="$ROOT/apps/web/node_modules/.bin/vite"
+  if [[ ! -x "$vite_bin" ]]; then
+    echo "Missing web deps: run 'make setup' (npm install)."
+    return 1
+  fi
+  return 0
+}
+
+check_sveltekit_cache() {
+  if is_running "web"; then
+    if [[ ! -d "$ROOT/apps/web/.svelte-kit" ]]; then
+      echo "SvelteKit cache missing while web is running."
+      return 1
+    fi
+  fi
+  return 0
+}
+
+check_go_deps() {
+  if [[ ! -f "$ROOT/apps/api/go.sum" ]]; then
+    echo "Missing Go deps (go.sum). Run 'go mod tidy' in apps/api."
+    return 1
+  fi
+  return 0
+}
+
+check_venv() {
+  local py="$ROOT/.venv/bin/python"
+  if [[ ! -x "$py" ]]; then
+    echo "Missing root .venv: run 'make setup' to create it."
+    return 1
+  fi
+  local py_ver
+  py_ver="$("$py" -c 'import sys; print(f"{sys.version_info.major}.{sys.version_info.minor}")' 2>/dev/null || true)"
+  if [[ "$py_ver" != "$PY_VERSION_REQUIRED" ]]; then
+    echo "Root .venv uses Python $py_ver, expected $PY_VERSION_REQUIRED."
+    return 2
+  fi
+  if ! "$py" -m pip --version >/dev/null 2>&1; then
+    echo "pip not available in root .venv. Run: $py -m ensurepip --upgrade"
+    return 1
+  fi
+  return 0
+}
+
+ensure_python_venv() {
+  local py
+  if command -v uv >/dev/null 2>&1; then
+    echo "Using uv to create .venv with Python $PY_VERSION_REQUIRED..."
+    rm -rf "$ROOT/.venv"
+    uv python install "$PY_VERSION_REQUIRED"
+    uv venv --python "$PY_VERSION_REQUIRED" "$ROOT/.venv"
+    "$ROOT/.venv/bin/python" -m ensurepip --upgrade
+    "$ROOT/.venv/bin/python" -m pip install -r "$ROOT/services/fastapi/requirements.txt"
+    return 0
+  fi
+
+  if [[ -x "/opt/homebrew/opt/python@${PY_VERSION_REQUIRED}/bin/python3" ]]; then
+    py="/opt/homebrew/opt/python@${PY_VERSION_REQUIRED}/bin/python3"
+  elif command -v "python${PY_VERSION_REQUIRED}" >/dev/null 2>&1; then
+    py="$(command -v "python${PY_VERSION_REQUIRED}")"
+  else
+    echo "Python $PY_VERSION_REQUIRED not found. Install it (e.g., brew install python@${PY_VERSION_REQUIRED})."
+    return 1
+  fi
+
+  echo "Recreating .venv with $("$py" -V)..."
+  rm -rf "$ROOT/.venv"
+  "$py" -m venv "$ROOT/.venv"
+  "$ROOT/.venv/bin/python" -m ensurepip --upgrade
+  "$ROOT/.venv/bin/python" -m pip install -r "$ROOT/services/fastapi/requirements.txt"
+  return 0
+}
+
+check_fastapi_deps() {
+  local py="$ROOT/.venv/bin/python"
+  if ! "$py" -m pip show fastapi >/dev/null 2>&1; then
+    echo "FastAPI deps missing: run 'make setup' or install requirements."
+    return 1
+  fi
+  return 0
+}
+
+check_db_env() {
+  if [[ -z "${DATABASE_URL:-}" ]]; then
+    echo "DATABASE_URL is required (set it in .envrc)."
+    return 1
+  fi
+  return 0
+}
+
+preflight() {
+  local mode="${1:-all}"
+  local ok=0
+  case "$mode" in
+    web)
+      check_node || ok=1
+      ;;
+    fastapi)
+      check_venv
+      case "$?" in
+        0) ;;
+        2) ensure_python_venv || ok=1 ;;
+        *) ok=1 ;;
+      esac
+      check_fastapi_deps || ok=1
+      ;;
+    api)
+      require_cmd go || ok=1
+      check_go_deps || ok=1
+      ;;
+    db)
+      check_db_env || ok=1
+      ;;
+    all)
+      require_cmd go || ok=1
+      check_go_deps || ok=1
+      check_db_env || ok=1
+      check_venv
+      case "$?" in
+        0) ;;
+        2) ensure_python_venv || ok=1 ;;
+        *) ok=1 ;;
+      esac
+      check_fastapi_deps || ok=1
+      check_node || ok=1
+      ;;
+    *)
+      echo "Unknown preflight mode: $mode"
+      return 1
+      ;;
+  esac
+  return "$ok"
+}
+
+doctor() {
+  load_env
+  local issues=0
+  local venv_status=0
+
+  echo "DeskOps doctor report"
+  echo "---------------------"
+
+  if ! require_cmd go; then issues=$((issues+1)); fi
+  if ! check_go_deps; then issues=$((issues+1)); fi
+  if ! require_cmd npm; then issues=$((issues+1)); fi
+  if ! check_node; then issues=$((issues+1)); fi
+  if ! check_sveltekit_cache; then issues=$((issues+1)); fi
+  if ! require_cmd psql; then issues=$((issues+1)); fi
+  if ! check_db_env; then issues=$((issues+1)); fi
+
+  check_venv
+  venv_status=$?
+  if [[ "$venv_status" -ne 0 ]]; then
+    issues=$((issues+1))
+  fi
+
+  if ! check_fastapi_deps; then issues=$((issues+1)); fi
+
+  if command -v pg_isready >/dev/null 2>&1; then
+    if pg_isready >/dev/null 2>&1; then
+      echo "Postgres: accepting connections"
+    else
+      echo "Postgres: not accepting connections"
+    fi
+  else
+    echo "pg_isready not found (cannot check DB readiness)"
+  fi
+
+  if [[ "$issues" -eq 0 ]]; then
+    echo "No issues detected."
+    return 0
+  fi
+
+  echo ""
+  echo "Issues found: $issues"
+  read -r -p "Fix issues now? (Y/N): " confirm
+  if [[ "$confirm" != "Y" ]]; then
+    echo "Skipped fixes."
+    return 1
+  fi
+
+  if ! command -v go >/dev/null 2>&1; then
+    echo "Go not installed; cannot fix automatically."
+  else
+    if [[ ! -f "$ROOT/apps/api/go.sum" ]]; then
+      (cd "$ROOT/apps/api" && go mod tidy)
+    fi
+  fi
+
+  if ! command -v npm >/dev/null 2>&1; then
+    echo "npm not installed; cannot fix web deps."
+  else
+    if [[ ! -x "$ROOT/apps/web/node_modules/.bin/vite" ]]; then
+      (cd "$ROOT/apps/web" && npm install)
+    fi
+  fi
+
+  if is_running "web" && [[ ! -d "$ROOT/apps/web/.svelte-kit" ]]; then
+    stop_service "web"
+    rm -rf "$ROOT/apps/web/.svelte-kit"
+    start_service "web" "$ROOT/apps/web" "npm run dev -- --host 127.0.0.1 --port 8888"
+  fi
+
+  if [[ "$venv_status" -ne 0 ]]; then
+    ensure_python_venv || return 1
+  fi
+
+  if [[ -x "$ROOT/.venv/bin/python" ]]; then
+    "$ROOT/.venv/bin/python" -m pip install -r "$ROOT/services/fastapi/requirements.txt"
+  fi
+
+  echo "Fixes applied. Re-run 'make up' or 'make preflight' to verify."
+}
+
 check_db() {
   if command -v pg_isready >/dev/null 2>&1; then
     if ! pg_isready >/dev/null 2>&1; then
@@ -93,7 +315,7 @@ check_db() {
 migrate_db() {
   load_env
   if [[ -z "${DATABASE_URL:-}" ]]; then
-    echo "DATABASE_URL is required for migrations."
+    echo "DATABASE_URL is required for migrations (set it in .envrc)."
     return 1
   fi
   if ! command -v psql >/dev/null 2>&1; then
@@ -104,10 +326,23 @@ migrate_db() {
   psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f "$ROOT/db/migrations/0002_views.sql"
 }
 
+run_metadata() {
+  local py
+  if [[ -x "$ROOT/.venv/bin/python" ]]; then
+    py="$ROOT/.venv/bin/python"
+  elif command -v python3 >/dev/null 2>&1; then
+    py="$(command -v python3)"
+  else
+    echo "python3 not found."
+    return 1
+  fi
+  "$py" "$ROOT/scripts/build_metadata_indices.py"
+}
+
 reset_db() {
   load_env
   if [[ -z "${DATABASE_URL:-}" ]]; then
-    echo "DATABASE_URL is required to reset the database."
+    echo "DATABASE_URL is required to reset the database (set it in .envrc)."
     return 1
   fi
   if ! command -v psql >/dev/null 2>&1; then
@@ -125,19 +360,28 @@ reset_db() {
   migrate_db
 }
 
-case "${1:-up}" in
+case "${1:-live}" in
   setup)
     (cd "$ROOT/apps/api" && go mod tidy)
-    (cd "$ROOT/services/fastapi" && python3 -m venv .venv && . .venv/bin/activate && pip install -r requirements.txt)
+    ensure_python_venv
     (cd "$ROOT/apps/web" && npm install)
     ;;
   up)
     load_env
+    preflight all || exit 1
     check_db || true
     start_service "api" "$ROOT/apps/api" "go run ./cmd/server"
-    start_service "fastapi" "$ROOT/services/fastapi" ". .venv/bin/activate && uvicorn app.main:app --reload --host 127.0.0.1 --port 8090"
+    start_service "fastapi" "$ROOT/services/fastapi" ". \"$ROOT/.venv/bin/activate\" && uvicorn app.main:app --reload --host 127.0.0.1 --port 8090"
     start_service "web" "$ROOT/apps/web" "npm run dev -- --host 127.0.0.1 --port 8888"
     echo "Logs: $RUN_DIR/*.log"
+    ;;
+  live)
+    "$0" up
+    ensure_run_dir
+    touch "$RUN_DIR/api.log" "$RUN_DIR/fastapi.log" "$RUN_DIR/web.log"
+    echo "Tailing logs (Ctrl+C to stop)..."
+    trap '"$0" down; exit 0' INT TERM
+    tail -n 200 -f "$RUN_DIR"/*.log
     ;;
   down)
     stop_service "web"
@@ -157,8 +401,20 @@ case "${1:-up}" in
     status_service "fastapi"
     status_service "web"
     ;;
+  doctor)
+    doctor
+    ;;
+  preflight)
+    load_env
+    preflight "${2:-all}"
+    ;;
   migrate)
+    load_env
+    preflight db || exit 1
     migrate_db
+    ;;
+  metadata)
+    run_metadata
     ;;
   clean)
     rm -rf "$RUN_DIR" \
@@ -180,12 +436,12 @@ case "${1:-up}" in
       "$ROOT/apps/web/.svelte-kit" \
       "$ROOT/apps/web/.vite" \
       "$ROOT/apps/web/dist" \
-      "$ROOT/services/fastapi/.venv" \
+      "$ROOT/.venv" \
       "$ROOT/services/fastapi/__pycache__"
     reset_db || true
     ;;
   *)
-    echo "Usage: ./deskops [setup|up|down|restart|logs|status|migrate|clean|reset]"
+    echo "Usage: ./deskops [live|setup|up|down|restart|logs|status|migrate|metadata|clean|reset|doctor|preflight]"
     exit 1
     ;;
 esac

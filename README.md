@@ -20,29 +20,32 @@ Source-first control console for GulfChain.
 
 ## Environment
 
-Create `.env` in repo root:
+DeskOps uses `.envrc` (direnv) in the repo root. Update values there and run:
 
 ```bash
-cp .env.example .env
-set -a
-source .env
-set +a
+direnv allow
 ```
+
+Optional: set `BACKTEST_API_BASE` (e.g. `http://127.0.0.1:8765`) to have the Go API read directly from the multigate-backtest `db_tool.py web` server instead of Postgres.
 
 ## Start services (source-first)
 
-### Quick start (after setup)
+### Do This In Order (Source Build)
 
 ```bash
-./deskops
+cd /Users/cole/Projects/gulfchain/DeskOps
+direnv allow
+make setup
+createdb deskops
+make migrate
+make up
 ```
 
-### Make targets
+Verify:
 
 ```bash
-make setup
-make up
-make logs
+curl -sS http://localhost:9090/health
+curl -sS http://localhost:8888/api/backtests/runs
 ```
 
 ### Go API
@@ -72,6 +75,14 @@ npm run dev -- --host 127.0.0.1 --port 8888
 ```
 
 The UI uses same-origin proxies (`/api/...` and `/api/fastapi/...`), so it works cleanly across LAN devices without CORS issues. Make sure the Go API and FastAPI are running.
+
+If `BACKTEST_API_BASE` is set, start the backtest API first:
+
+```bash
+cd /Users/cole/Projects/gulfchain/multigate-backtest
+source .venv/bin/activate
+python scripts/db_tool.py web --host 127.0.0.1 --port 8765
+```
 
 ## Import backtest data (SQLite -> Postgres)
 
