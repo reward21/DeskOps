@@ -1,0 +1,29 @@
+{
+  "page": "home",
+  "version": 1,
+  "generated_at": "",
+  "items": [],
+  "schema": {
+    "base_fields": [
+      "id",
+      "title",
+      "summary",
+      "tags",
+      "source_path",
+      "source_repo",
+      "type",
+      "created_at",
+      "updated_at",
+      "status",
+      "visibility",
+      "owner",
+      "meta"
+    ],
+    "meta_fields": [
+      "section",
+      "cta_label",
+      "cta_href",
+      "priority"
+    ]
+  }
+}

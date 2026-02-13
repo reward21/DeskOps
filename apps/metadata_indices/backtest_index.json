@@ -1,0 +1,33 @@
+{
+  "page": "backtest",
+  "version": 1,
+  "generated_at": "",
+  "items": [],
+  "schema": {
+    "base_fields": [
+      "id",
+      "title",
+      "summary",
+      "tags",
+      "source_path",
+      "source_repo",
+      "type",
+      "created_at",
+      "updated_at",
+      "status",
+      "visibility",
+      "owner",
+      "meta"
+    ],
+    "meta_fields": [
+      "run_id",
+      "symbol",
+      "timeframe",
+      "strategy",
+      "dataset",
+      "gates",
+      "equity_curve_path",
+      "report_path"
+    ]
+  }
+}
