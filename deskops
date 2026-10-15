@@ -252,8 +252,10 @@ check_backtest_api_deps() {
     echo "Missing backtest API script: $BACKTEST_ROOT/scripts/db_tool.py"
     return 1
   fi
-  if [[ ! -f "$BACKTEST_ROOT/runs/backtests.sqlite" ]]; then
-    echo "Missing backtest SQLite DB: $BACKTEST_ROOT/runs/backtests.sqlite"
+  local db
+  db="$(cd "$BACKTEST_ROOT" && "$py" -c 'from src.config import configured_db_path; print(configured_db_path())' 2>/dev/null)" || db=""
+  if [[ -z "$db" || ! -f "$db" ]]; then
+    echo "Missing backtest SQLite DB (multigate config.yaml paths.db_path): ${db:-unresolved}"
     return 1
   fi
   return 0

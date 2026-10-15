@@ -161,3 +161,8 @@ Rule: add a dated entry for every Codex change (what/where/why). Do not edit old
 - File: `.gitignore`
   - Appended `.env.*` (keeps `.env.example`), `*.key`, `*.pem`, `*.sqlite`, `*.sqlite3`, SQLite sidecars, `*.db`, `/apps/web/build/`, `test-results/`, `playwright-report/`.
   - Why: the untracked local LLM memory DB `db/llm_memory.sqlite` was about to be committed. No tracked file is affected.
+
+## 2026-10-14 21:30 CDT — retire runs/backtests.sqlite as a default DB (Claude Code)
+- File: `deskops` — `check_backtest_api_deps` no longer requires `multigate-backtest/runs/backtests.sqlite`; it asks multigate's `src.config.configured_db_path()` (via the repo `.venv`) and checks that file exists. `bash -n` passes.
+- File: `.envrc` (local, gitignored) — `BACKTEST_SQLITE_PATH` now points at `runs/backtests_ride_ssd.sqlite`. Requires `direnv allow` again.
+- Why: the user is archiving the old 142.8 GB `runs/backtests.sqlite`; the launcher refused to start without it.
