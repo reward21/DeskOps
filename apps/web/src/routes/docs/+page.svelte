@@ -1,5 +1,5 @@
 <script>
-  import { onMount } from 'svelte';
+  import { onMount, onDestroy } from 'svelte';
   import DocsTree from '$lib/components/DocsTree.svelte';
 
   let roots = [];
@@ -13,10 +13,19 @@
   let fileLoading = false;
   let fileError = '';
   let isMarkdown = false;
+  let isPdf = false;
+  let pdfSrc = '';
   let metaIndex = null;
   let metaError = '';
   let metaMap = new Map();
   let selectedMeta = null;
+  let treeSearch = '';
+  let treeFilter = 'all';
+  let treeFocus = false;
+  let treeEl;
+  let viewerEl;
+  let fileButtons = [];
+  let selectedIndex = -1;
 
   const loadTree = async () => {
     loading = true;
@@ -39,6 +48,28 @@
   const normalizePath = (value) => (value || '').replace(/\\/g, '/').replace(/^\/+/, '');
 
   const getRootRel = (rootId) => roots.find((root) => root.id === rootId)?.rootRel || '';
+
+  const getRootTitle = (root) => {
+    if (!root) return '';
+    if (root.name) return root.name;
+    const rel = normalizePath(root?.rootRel || '');
+    if (rel) return rel.split('/')[0];
+    const abs = (root?.rootPath || '').replace(/\\/g, '/');
+    const parts = abs.split('/').filter(Boolean);
+    return parts.length ? parts[parts.length - 1] : 'docs';
+  };
+
+  const getRootTitleById = (rootId) => getRootTitle(roots.find((root) => root.id === rootId));
+
+  const getRootDisplayPath = (root) => {
+    if (!root) return '';
+    const base = root?.rootBaseName || '';
+    const rel = normalizePath(root?.rootRel || '');
+    if (!base) return rel || root?.rootPath || '';
+    if (!rel) return `/${base}`;
+    if (root?.name && root.name !== rel) return `/${base}/${root.name}`;
+    return `/${base}/${rel}`;
+  };
 
   const getFullPath = (rootId, relPath) => {
     const rootRel = getRootRel(rootId);
@@ -92,12 +123,52 @@
     return out;
   };
 
+  const parseTableRow = (line) => {
+    const trimmed = (line || '').trim();
+    if (!trimmed.includes('|')) return null;
+    let inner = trimmed;
+    if (inner.startsWith('|')) inner = inner.slice(1);
+    if (inner.endsWith('|')) inner = inner.slice(0, -1);
+    const cells = inner.split('|').map((c) => c.trim());
+    if (cells.every((c) => c === '')) return null;
+    return cells;
+  };
+
+  const isSeparatorRow = (cells) =>
+    Array.isArray(cells) && cells.length > 0 && cells.every((c) => /^:?-{2,}:?$/.test(c.trim()));
+
+  const alignFromSep = (cell) => {
+    const c = (cell || '').trim();
+    const left = c.startsWith(':');
+    const right = c.endsWith(':');
+    if (left && right) return 'center';
+    if (right) return 'right';
+    return 'left';
+  };
+
+  const renderTable = (headerCells, sepCells, bodyRows) => {
+    const aligns = sepCells.map(alignFromSep);
+    const ths = headerCells
+      .map((cell, idx) => `<th style="text-align:${aligns[idx] || 'left'}">${formatInline(escapeHtml(cell))}</th>`)
+      .join('');
+    const trs = bodyRows
+      .map((row) => {
+        const tds = row
+          .map((cell, idx) => `<td style="text-align:${aligns[idx] || 'left'}">${formatInline(escapeHtml(cell))}</td>`)
+          .join('');
+        return `<tr>${tds}</tr>`;
+      })
+      .join('');
+    return `<table><thead><tr>${ths}</tr></thead><tbody>${trs}</tbody></table>`;
+  };
+
   const renderMarkdown = (raw) => {
     const lines = (raw || '').split('\n');
     let html = '';
     let inCode = false;
     let codeBuffer = [];
-    for (const line of lines) {
+    for (let i = 0; i < lines.length; i += 1) {
+      const line = lines[i];
       if (line.trim().startsWith('```')) {
         if (inCode) {
           html += `<pre><code>${escapeHtml(codeBuffer.join('\n'))}</code></pre>`;
@@ -114,6 +185,23 @@
       }
       if (line.trim() === '') {
         html += '<div class="md-spacer"></div>';
+        continue;
+      }
+      const headerCells = parseTableRow(line);
+      const sepCells = parseTableRow(lines[i + 1] || '');
+      if (headerCells && sepCells && isSeparatorRow(sepCells)) {
+        const bodyRows = [];
+        i += 2;
+        while (i < lines.length) {
+          const rowCells = parseTableRow(lines[i]);
+          if (!rowCells || lines[i].trim() === '') {
+            i -= 1;
+            break;
+          }
+          bodyRows.push(rowCells);
+          i += 1;
+        }
+        html += renderTable(headerCells, sepCells, bodyRows);
         continue;
       }
       if (line.startsWith('### ')) {
@@ -143,8 +231,21 @@
     fileLoading = true;
     fileError = '';
     isMarkdown = false;
+    isPdf = false;
+    pdfSrc = '';
     contentHtml = '';
     try {
+      const lowerPath = String(path || '').toLowerCase();
+      if (lowerPath.endsWith('.pdf')) {
+        isPdf = true;
+        const target = `/api/docs/file?root=${encodeURIComponent(rootId)}&path=${encodeURIComponent(path)}`;
+        pdfSrc = `${target}#toolbar=1&navpanes=1&scrollbar=1`;
+        const metaKey = getFullPath(rootId, path);
+        selectedMeta = metaMap.get(metaKey) || null;
+        content = '';
+        return;
+      }
+
       const res = await fetch(`/api/docs/file?root=${encodeURIComponent(rootId)}&path=${encodeURIComponent(path)}`);
       const data = await res.json();
       if (!res.ok || !data.ok) {
@@ -166,19 +267,89 @@
     }
   };
 
+  const collectFileButtons = () => {
+    if (!treeEl) return [];
+    const nodes = Array.from(treeEl.querySelectorAll('[data-docs-path]'));
+    fileButtons = nodes;
+    selectedIndex = Math.max(
+      0,
+      fileButtons.findIndex((el) => el?.dataset?.docsPath === selectedPath),
+    );
+    return fileButtons;
+  };
+
+  const selectByIndex = (idx) => {
+    if (!fileButtons.length) collectFileButtons();
+    if (!fileButtons.length) return;
+    const next = Math.max(0, Math.min(fileButtons.length - 1, idx));
+    const el = fileButtons[next];
+    const rootId = el?.dataset?.docsRoot || '';
+    const path = el?.dataset?.docsPath || '';
+    if (!path || !rootId) return;
+    selectedIndex = next;
+    loadFile(rootId, path);
+    el?.scrollIntoView({ block: 'nearest' });
+  };
+
+  const stepSelection = (delta) => {
+    if (!fileButtons.length) collectFileButtons();
+    if (!fileButtons.length) return;
+    if (selectedIndex < 0) selectedIndex = 0;
+    selectByIndex(selectedIndex + delta);
+  };
+
+  const onTreeFocus = () => {
+    treeFocus = true;
+    collectFileButtons();
+  };
+
+  const onTreeBlur = () => {
+    treeFocus = false;
+  };
+
   $: if (selectedRoot && selectedPath) {
     const metaKey = getFullPath(selectedRoot, selectedPath);
     selectedMeta = metaMap.get(metaKey) || null;
   }
 
+  $: if (!loading) {
+    // keep button list fresh after filtering/search/tree load
+    queueMicrotask(() => collectFileButtons());
+  }
+
+  const onKeyDown = (event) => {
+    if (!treeEl) return;
+    const active = document.activeElement;
+    if (!treeEl.contains(active)) return;
+    const tag = active?.tagName?.toLowerCase();
+    if (tag === 'input' || tag === 'textarea' || tag === 'select') return;
+    if (event.key === 'ArrowDown') {
+      event.preventDefault();
+      stepSelection(1);
+    } else if (event.key === 'ArrowUp') {
+      event.preventDefault();
+      stepSelection(-1);
+    } else if (event.key === 'Enter') {
+      event.preventDefault();
+      if (selectedIndex >= 0) selectByIndex(selectedIndex);
+    }
+  };
+
   onMount(async () => {
     await Promise.all([loadTree(), loadMetadata()]);
+    window.addEventListener('keydown', onKeyDown);
+  });
+
+  onDestroy(() => {
+    window.removeEventListener('keydown', onKeyDown);
   });
 </script>
 
 <section class="page">
   <h2>Development / Docs</h2>
-  <p>File explorer for <code>{rootPath || '/gulfchain/docs'}</code>.</p>
+  {#if !roots.length}
+    <p>File explorer for <code>{rootPath || '/gulfchain/docs'}</code>.</p>
+  {/if}
   {#if metaError}
     <p class="error">{metaError}</p>
   {/if}
@@ -189,32 +360,53 @@
     <p class="error">{error}</p>
   {:else}
     <div class="layout">
-      <aside class="tree">
+      <aside
+        class="tree"
+        bind:this={treeEl}
+        tabindex="0"
+        on:focusin={onTreeFocus}
+        on:focusout={onTreeBlur}
+        aria-label="Docs file explorer"
+      >
         <div class="tree-head">
           <h3>Docs Explorer</h3>
           <button on:click={loadTree}>Refresh</button>
         </div>
+        <div class="tree-controls">
+          <input type="search" placeholder="Search docs…" bind:value={treeSearch} />
+          <select bind:value={treeFilter}>
+            <option value="all">All files</option>
+            <option value="md">Markdown</option>
+            <option value="pdf">PDF</option>
+            <option value="json">JSON</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
         {#each roots as group (group.id)}
           <div class="tree-group">
-            <div class="tree-label">{group.node.name}</div>
+            <div class="tree-label">{getRootTitle(group)}</div>
             <DocsTree
               node={group.node}
               rootId={group.id}
               selectedPath={selectedPath}
               onSelect={loadFile}
               titleLookup={getTitle}
+              search={treeSearch}
+              filter={treeFilter}
             />
           </div>
         {/each}
       </aside>
-      <div class="viewer">
+      <div class="viewer" bind:this={viewerEl}>
         {#if fileLoading}
           <p>Loading file…</p>
         {:else if fileError}
           <p class="error">{fileError}</p>
         {:else if selectedPath}
           <div class="viewer-head">
-            <span class="mono">{selectedRoot ? `${selectedRoot}/` : ''}{selectedPath}</span>
+            <span class="mono">
+              {getRootTitleById(selectedRoot) ? `${getRootTitleById(selectedRoot)}/` : ''}{selectedPath}
+            </span>
           </div>
           <div class="meta-card">
             <div class="meta-title">Metadata</div>
@@ -265,7 +457,11 @@
               <p class="muted">No metadata entry yet. Add one to <code>apps/metadata_indices/docs_index.json</code>.</p>
             {/if}
           </div>
-          {#if isMarkdown}
+          {#if isPdf}
+            <div class="pdf-shell">
+              <iframe class="pdf-viewer" src={pdfSrc} title={`PDF preview: ${selectedPath}`} />
+            </div>
+          {:else if isMarkdown}
             <div class="markdown content">{@html contentHtml}</div>
           {:else}
             <pre class="content">{content}</pre>
@@ -297,15 +493,41 @@
     border: 1px solid var(--border);
     border-radius: 12px;
     padding: 1rem;
-    height: fit-content;
+    max-height: 70vh;
+    overflow-y: auto;
+    overflow-x: auto;
     position: sticky;
     top: 90px;
+    outline: none;
+  }
+  .tree:focus-within {
+    border-color: rgba(0, 172, 172, 0.5);
+    box-shadow: 0 0 0 2px rgba(0, 172, 172, 0.15);
   }
   .tree-head {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    margin-bottom: 0.4rem;
+  }
+  .tree-controls {
+    display: grid;
+    gap: 0.5rem;
+    padding: 0.6rem;
+    border: 1px solid var(--border);
+    background: var(--surface-alt);
+    border-radius: 10px;
     margin-bottom: 0.75rem;
+  }
+  .tree-controls input,
+  .tree-controls select {
+    width: 100%;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--text);
+    border-radius: 8px;
+    padding: 0.4rem 0.6rem;
+    font-size: 0.85rem;
   }
   .tree-head button {
     border: 1px solid var(--border);
@@ -381,6 +603,18 @@
     white-space: pre-wrap;
     font-size: 0.85rem;
   }
+  .pdf-shell {
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+    background: #fff;
+  }
+  .pdf-viewer {
+    width: 100%;
+    min-height: 75vh;
+    border: none;
+    display: block;
+  }
   .markdown :global(h1) {
     font-size: 1.6rem;
     margin: 0.8rem 0;
@@ -412,6 +646,25 @@
     padding: 0.75rem;
     border-radius: 10px;
     overflow: auto;
+  }
+  .markdown :global(table) {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 0.6rem 0;
+    font-size: 0.85rem;
+  }
+  .markdown :global(th),
+  .markdown :global(td) {
+    border: 1px solid var(--border);
+    padding: 0.4rem 0.55rem;
+    vertical-align: top;
+  }
+  .markdown :global(th) {
+    background: var(--surface-alt);
+    font-weight: 600;
+  }
+  .markdown :global(tr:nth-child(even) td) {
+    background: rgba(255, 255, 255, 0.02);
   }
   .markdown :global(a) {
     color: var(--accent);

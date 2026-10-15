@@ -1,0 +1,115 @@
+test_baseline_uses_open_quote (test_pipeline.BaselineTimingTests.test_baseline_uses_open_quote) ... ok
+test_entry_features_do_not_contain_future_outcomes (test_pipeline.CausalityTests.test_entry_features_do_not_contain_future_outcomes) ... ok
+test_isolated_config_and_restoration (test_pipeline.CausalityTests.test_isolated_config_and_restoration) ... ok
+test_vix_join_accepts_mixed_timestamp_units_without_same_day_leakage (test_pipeline.CausalityTests.test_vix_join_accepts_mixed_timestamp_units_without_same_day_leakage) ... ok
+test_vix_missing_stale_and_constant (test_pipeline.CausalityTests.test_vix_missing_stale_and_constant) ... ok
+test_vix_prior_close_and_future_invariance (test_pipeline.CausalityTests.test_vix_prior_close_and_future_invariance) ... ok
+test_custom_pipeline (test_pipeline.PipelineTests.test_custom_pipeline) ... ok
+test_orb_pipeline (test_pipeline.PipelineTests.test_orb_pipeline) ... ok
+test_zero_trade_pipeline (test_pipeline.PipelineTests.test_zero_trade_pipeline) ... ok
+test_orb_target_distance_can_change_without_moving_stop_or_entry (test_pipeline.StrategyTimingTests.test_orb_target_distance_can_change_without_moving_stop_or_entry) ... ok
+test_orb_zero_delay_rejected (test_pipeline.StrategyTimingTests.test_orb_zero_delay_rejected) ... ok
+test_simultaneous_tuning_processes_get_private_specs (test_pipeline.StrategyTimingTests.test_simultaneous_tuning_processes_get_private_specs) ... ok
+test_vwap_confirmation_enters_after_confirming_bar (test_pipeline.StrategyTimingTests.test_vwap_confirmation_enters_after_confirming_bar) ... ok
+test_eod_extends_early_strategy_exit (test_portfolio.AdditionalRuleTests.test_eod_extends_early_strategy_exit) ... ok
+test_overnight_forces_prior_session_close (test_portfolio.AdditionalRuleTests.test_overnight_forces_prior_session_close) ... ok
+test_reentry_average_down_and_exposure (test_portfolio.AdditionalRuleTests.test_reentry_average_down_and_exposure) ... ok
+test_simultaneous_symbol_marks_are_atomic (test_portfolio.AdditionalRuleTests.test_simultaneous_symbol_marks_are_atomic) ... ok
+test_streak_resets_next_session (test_portfolio.AdditionalRuleTests.test_streak_resets_next_session) ... ok
+test_vix_mid_alias_and_unknown_block (test_portfolio.AdditionalRuleTests.test_vix_mid_alias_and_unknown_block) ... ok
+test_empty_reconciles (test_portfolio.PersistenceTests.test_empty_reconciles) ... ok
+test_gate_state_independent (test_portfolio.PersistenceTests.test_gate_state_independent) ... ok
+test_reconciliation_and_tampering (test_portfolio.PersistenceTests.test_reconciliation_and_tampering) ... ok
+test_capacity_and_same_time_exit (test_portfolio.PortfolioTests.test_capacity_and_same_time_exit) ... ok
+test_close_entry_does_not_use_entry_bar_range (test_portfolio.PortfolioTests.test_close_entry_does_not_use_entry_bar_range) ... ok
+test_cooldown_starts_at_exit (test_portfolio.PortfolioTests.test_cooldown_starts_at_exit) ... ok
+test_empty (test_portfolio.PortfolioTests.test_empty) ... ok
+test_first_loss_drawdown (test_portfolio.PortfolioTests.test_first_loss_drawdown) ... ok
+test_future_exit_does_not_realize_at_entry (test_portfolio.PortfolioTests.test_future_exit_does_not_realize_at_entry) ... ok
+test_kill_liquidates (test_portfolio.PortfolioTests.test_kill_liquidates) ... ok
+test_marked_daily_kill (test_portfolio.PortfolioTests.test_marked_daily_kill) ... ok
+test_position_sizing_uses_unrealized_equity (test_portfolio.PortfolioTests.test_position_sizing_uses_unrealized_equity) ... ok
+test_session_flatten (test_portfolio.PortfolioTests.test_session_flatten) ... ok
+test_short_costs_and_cash (test_portfolio.PortfolioTests.test_short_costs_and_cash) ... ok
+test_stop_target_ambiguity_and_gap (test_portfolio.PortfolioTests.test_stop_target_ambiguity_and_gap) ... ok
+test_unknown_rules_and_missing_liquidity (test_portfolio.PortfolioTests.test_unknown_rules_and_missing_liquidity) ... ok
+test_actual_save_tool_and_duplicate_call_only_write_one_plan (test_quant_chat.QuantChatTests.test_actual_save_tool_and_duplicate_call_only_write_one_plan) ... ok
+test_bounded_history_keeps_whole_tool_exchange (test_quant_chat.QuantChatTests.test_bounded_history_keeps_whole_tool_exchange) ... ok
+test_disallowed_tools_and_bad_argument_types_do_not_write (test_quant_chat.QuantChatTests.test_disallowed_tools_and_bad_argument_types_do_not_write) ... ok
+test_quant_yaml_model_wins_in_request_with_environment_fallback (test_quant_chat.QuantChatTests.test_quant_yaml_model_wins_in_request_with_environment_fallback) ... ok
+test_repl_recovers_after_model_error_and_records_direct_action (test_quant_chat.QuantChatTests.test_repl_recovers_after_model_error_and_records_direct_action) ... ok
+test_shared_endpoint_environment_produces_single_chat_route (test_quant_chat.QuantChatTests.test_shared_endpoint_environment_produces_single_chat_route) ... ok
+test_structured_response_preserves_completion_diagnostics (test_quant_chat.QuantChatTests.test_structured_response_preserves_completion_diagnostics) ... ok
+test_transport_payload_and_connection_failure (test_quant_chat.QuantChatTests.test_transport_payload_and_connection_failure) ... ok
+test_unknown_tool_error_is_returned_to_model (test_quant_chat.QuantChatTests.test_unknown_tool_error_is_returned_to_model) ... ok
+test_url_normalization_preserves_proxy_prefix_and_validates (test_quant_chat.QuantChatTests.test_url_normalization_preserves_proxy_prefix_and_validates) ... ok
+test_invalid_envelope_and_routing_do_not_publish_an_edit (test_quant_demo.DemonstrationTests.test_invalid_envelope_and_routing_do_not_publish_an_edit) ... Quant stage: gate
+gate: correcting request: Return only changes and reason; the runner supplies experiment_id, revision and document
+gate: correcting request: Missing required tool arguments: reason. Put document edits inside changes.
+Completed: gate
+ok
+test_native_failure_uses_real_structured_arguments_and_resumes_without_repeating (test_quant_demo.DemonstrationTests.test_native_failure_uses_real_structured_arguments_and_resumes_without_repeating) ... Quant stage: create
+create: correcting request: Ollama HTTP 500: parse error
+Completed: create
+ok
+test_actual_multigate_run_uses_edited_private_inputs (test_quant_experiments.QuantExperimentTests.test_actual_multigate_run_uses_edited_private_inputs) ... ok
+test_create_edit_gate_matrix_and_strategy_keep_revisions (test_quant_experiments.QuantExperimentTests.test_create_edit_gate_matrix_and_strategy_keep_revisions) ... ok
+test_invalid_edits_and_stale_revision_do_not_publish (test_quant_experiments.QuantExperimentTests.test_invalid_edits_and_stale_revision_do_not_publish) ... ok
+test_matrix_edit_checks_tags_and_is_consumable_by_existing_tuner (test_quant_experiments.QuantExperimentTests.test_matrix_edit_checks_tags_and_is_consumable_by_existing_tuner) ... ok
+test_path_escape_and_outside_revision_edits_are_rejected (test_quant_experiments.QuantExperimentTests.test_path_escape_and_outside_revision_edits_are_rejected) ... ok
+test_timeout_and_failed_launch_are_recorded (test_quant_experiments.QuantExperimentTests.test_timeout_and_failed_launch_are_recorded) ... ok
+test_background_start_status_stop_and_frozen_data (test_quant_experiments.QuantResearchControlTests.test_background_start_status_stop_and_frozen_data) ... <frozen importlib._bootstrap>:491: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x10edd72e0>
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/Users/runner/work/crossbow/crossbow/arrow/cpp/src/arrow/util/cpu_info.cc:239: IOError: sysctlbyname failed for 'hw.l1dcachesize'. Detail: [errno 1] Operation not permitted
+/Users/runner/work/crossbow/crossbow/arrow/cpp/src/arrow/util/cpu_info.cc:239: IOError: sysctlbyname failed for 'hw.l2cachesize'. Detail: [errno 1] Operation not permitted
+/Users/runner/work/crossbow/crossbow/arrow/cpp/src/arrow/util/cpu_info.cc:239: IOError: sysctlbyname failed for 'hw.l3cachesize'. Detail: [errno 1] Operation not permitted
+/Users/runner/work/crossbow/crossbow/arrow/cpp/src/arrow/util/cpu_info.cc:239: IOError: sysctlbyname failed for 'hw.optional.neon'. Detail: [errno 1] Operation not permitted
+ok
+test_costed_benchmark_target_and_missing_evidence (test_quant_experiments.QuantResearchControlTests.test_costed_benchmark_target_and_missing_evidence) ... ok
+test_refinement_proposal_cannot_edit_costs_or_dates (test_quant_experiments.QuantResearchControlTests.test_refinement_proposal_cannot_edit_costs_or_dates) ... ok
+test_gate_tuning_uses_matrix_and_configured_dates (test_quant_experiments.QuantResearchIntegrationTests.test_gate_tuning_uses_matrix_and_configured_dates) ... ok
+test_two_refinement_iterations_use_real_engine_and_separate_validation (test_quant_experiments.QuantResearchIntegrationTests.test_two_refinement_iterations_use_real_engine_and_separate_validation) ... ok
+test_baseline_crash_stops_before_proposals_and_preserves_error (test_quant_research_failures.ResearchFailureTests.test_baseline_crash_stops_before_proposals_and_preserves_error) ... Iteration 1 failed during development_backtest: Backtest evaluation failed: MergeError: incompatible merge keys. Attempt: /private/var/folders/hg/pv6h_9gx5flgq6s5vsbmj9500000gn/T/quant-experiment-test-xiq8fl4d/attempt
+ok
+test_empty_malformed_and_truncated_proposals_retry_with_diagnostics (test_quant_research_failures.ResearchFailureTests.test_empty_malformed_and_truncated_proposals_retry_with_diagnostics) ... ok
+test_execution_context_reaches_model_and_duplicate_is_retried (test_quant_research_failures.ResearchFailureTests.test_execution_context_reaches_model_and_duplicate_is_retried) ... ok
+test_exhausted_empty_proposals_are_actionable_and_do_not_write_revisions (test_quant_research_failures.ResearchFailureTests.test_exhausted_empty_proposals_are_actionable_and_do_not_write_revisions) ... ok
+test_invalid_or_noop_proposal_never_reaches_editor (test_quant_research_failures.ResearchFailureTests.test_invalid_or_noop_proposal_never_reaches_editor) ... ok
+test_legacy_failed_job_is_reported_honestly_without_rewriting_history (test_quant_research_failures.ResearchFailureTests.test_legacy_failed_job_is_reported_honestly_without_rewriting_history) ... ok
+test_model_errors_do_not_consume_no_improvement_budget (test_quant_research_failures.ResearchFailureTests.test_model_errors_do_not_consume_no_improvement_budget) ... Iteration 2 failed during proposing: empty proposal
+Iteration 3 failed during proposing: empty proposal
+Iteration 4 failed during proposing: empty proposal
+ok
+test_sizing_recovery_uses_only_untested_configured_choices (test_quant_research_failures.ResearchFailureTests.test_sizing_recovery_uses_only_untested_configured_choices) ... ok
+test_stop_between_response_retries_avoids_second_model_call (test_quant_research_failures.ResearchFailureTests.test_stop_between_response_retries_avoids_second_model_call) ... ok
+test_unresolved_model_error_at_iteration_budget_is_incomplete (test_quant_research_failures.ResearchFailureTests.test_unresolved_model_error_at_iteration_budget_is_incomplete) ... Iteration 2 failed during proposing: empty proposal
+ok
+test_valid_underperforming_candidates_complete_normally (test_quant_research_failures.ResearchFailureTests.test_valid_underperforming_candidates_complete_normally) ... ok
+test_validation_crash_is_failure_and_retains_development (test_quant_research_failures.ResearchFailureTests.test_validation_crash_is_failure_and_retains_development) ... Iteration 1 failed during validation_backtest: Backtest evaluation failed: timed_out. Attempt: /private/var/folders/hg/pv6h_9gx5flgq6s5vsbmj9500000gn/T/quant-experiment-test-ycq6iqov/attempt
+ok
+test_zero_trade_evidence_retains_the_actual_rejection_reason (test_quant_research_failures.ResearchFailureTests.test_zero_trade_evidence_retains_the_actual_rejection_reason) ... ok
+test_add_optional_gate_rule_and_refine_execution (test_quant_tuning.TuningTests.test_add_optional_gate_rule_and_refine_execution) ... ok
+test_agent_can_add_and_constrain_separate_orb_target (test_quant_tuning.TuningTests.test_agent_can_add_and_constrain_separate_orb_target) ... ok
+test_bad_formulas_cycles_and_limits_do_not_publish (test_quant_tuning.TuningTests.test_bad_formulas_cycles_and_limits_do_not_publish) ... ok
+test_chat_tools_create_versioned_parameters_metrics_and_limits (test_quant_tuning.TuningTests.test_chat_tools_create_versioned_parameters_metrics_and_limits) ... ok
+test_custom_metrics_constraints_and_minimization (test_quant_tuning.TuningTests.test_custom_metrics_constraints_and_minimization) ... ok
+test_diversified_search_rotates_fields_and_keeps_model_values_in_range (test_quant_tuning.TuningTests.test_diversified_search_rotates_fields_and_keeps_model_values_in_range) ... ok
+test_execution_context_distinguishes_sizing_from_active_protection (test_quant_tuning.TuningTests.test_execution_context_distinguishes_sizing_from_active_protection) ... ok
+test_parameter_ranges_are_enforced_on_background_proposals (test_quant_tuning.TuningTests.test_parameter_ranges_are_enforced_on_background_proposals) ... ok
+test_small_chat_tools_preserve_existing_named_definitions (test_quant_tuning.TuningTests.test_small_chat_tools_preserve_existing_named_definitions) ... ok
+test_unbounded_budgets_remain_cancellable (test_quant_tuning.TuningTests.test_unbounded_budgets_remain_cancellable) ... ok
+test_undefined_metric_cannot_win_or_claim_success (test_quant_tuning.TuningTests.test_undefined_metric_cannot_win_or_claim_success) ... ok
+test_worker_selects_by_agent_metric_and_snapshots_policy (test_quant_tuning.TuningTests.test_worker_selects_by_agent_metric_and_snapshots_policy) ... ok
+test_web_can_inspect_while_engine_holds_lock_without_allowing_edits (test_quant_web.QuantWebSnapshotTests.test_web_can_inspect_while_engine_holds_lock_without_allowing_edits) ... ok
+test_completed_direct_action_uses_existing_tool_and_persists_result (test_quant_web.QuantWebTests.test_completed_direct_action_uses_existing_tool_and_persists_result) ... ok
+test_concurrent_new_turn_is_rejected_without_creating_request (test_quant_web.QuantWebTests.test_concurrent_new_turn_is_rejected_without_creating_request) ... ok
+test_failed_direct_action_keeps_complete_tool_exchange (test_quant_web.QuantWebTests.test_failed_direct_action_keeps_complete_tool_exchange) ... ok
+test_http_retry_does_not_repeat_accepted_turn_and_conflicting_id_is_rejected (test_quant_web.QuantWebTests.test_http_retry_does_not_repeat_accepted_turn_and_conflicting_id_is_rejected) ... ok
+test_input_confinement_and_allowed_operations (test_quant_web.QuantWebTests.test_input_confinement_and_allowed_operations) ... ok
+test_interrupted_workers_and_partial_transcript_reads_are_visible (test_quant_web.QuantWebTests.test_interrupted_workers_and_partial_transcript_reads_are_visible) ... ok
+test_worker_reuses_real_chat_loop_and_server_history (test_quant_web.QuantWebTests.test_worker_reuses_real_chat_loop_and_server_history) ... ok
+
+----------------------------------------------------------------------
+Ran 91 tests in 139.273s
+
+OK

@@ -21,7 +21,7 @@
       <p>SQLite import status and API health.</p>
     </div>
   </div>
-  <LLMPanel title="Console LLM" />
+  <LLMPanel title="Console LLM" threadId="console" />
 </section>
 
 <style>

@@ -1,30 +1,18 @@
-import { env } from '$env/dynamic/private';
 import { json } from '@sveltejs/kit';
 import path from 'node:path';
 import fs from 'node:fs/promises';
+import { resolveGulfchainRoot } from '$lib/server/gulfchainRoot.js';
 
 const MAX_DEPTH = 6;
 
 const getRoots = () => {
-  const root = env.GULFCHAIN_ROOT;
+  const root = resolveGulfchainRoot();
   if (!root) return [];
   return [
     {
-      id: 'gulfchain-docs',
-      name: 'Gulfchain Docs',
-      path: path.join(root, 'docs'),
-      rootBase: root
-    },
-    {
-      id: 'backtest-reports',
-      name: 'Backtest Reports',
-      path: path.join(root, 'multigate-backtest', 'runs', 'artifacts', 'reports'),
-      rootBase: root
-    },
-    {
-      id: 'backtest-docs',
-      name: 'Backtest Docs',
-      path: path.join(root, 'multigate-backtest', 'docs'),
+      id: 'gulfchain-root',
+      name: 'gulfchain',
+      path: root,
       rootBase: root
     }
   ];
@@ -33,7 +21,7 @@ const getRoots = () => {
 const isHidden = (name) => name.startsWith('.');
 const isAllowedFile = (name) => {
   const lower = name.toLowerCase();
-  return lower.endsWith('.md') || lower.endsWith('.txt');
+  return lower.endsWith('.md') || lower.endsWith('.txt') || lower.endsWith('.pdf');
 };
 
 async function buildTree(dir, root, depth = 0) {
@@ -77,7 +65,7 @@ async function buildTree(dir, root, depth = 0) {
 export async function GET() {
   const roots = getRoots();
   if (!roots.length) {
-    return json({ ok: false, error: 'GULFCHAIN_ROOT is not set.' }, { status: 500 });
+    return json({ ok: false, error: 'Gulfchain root not found. Set GULFCHAIN_ROOT or run from the DeskOps workspace.' }, { status: 500 });
   }
   const payload = [];
   for (const root of roots) {
@@ -85,8 +73,10 @@ export async function GET() {
     const rel = path.relative(root.rootBase, root.path).replace(/\\/g, '/');
     payload.push({
       id: root.id,
+      name: root.name,
       rootPath: root.path,
       rootRel: rel,
+      rootBaseName: path.basename(root.rootBase),
       node: {
         type: 'dir',
         name: root.name,

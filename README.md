@@ -7,6 +7,7 @@ Source-first control console for GulfChain.
 - `apps/web` SvelteKit UI (port 8888)
 - `apps/api` Go API (port 9090)
 - `services/fastapi` Python service (port 8090)
+- `../multigate-backtest/scripts/db_tool.py web` backtest API (port 8765)
 - `db/` Postgres migrations
 - `docs/` architecture notes
 
@@ -33,13 +34,16 @@ Optional: set `BACKTEST_API_BASE` (e.g. `http://127.0.0.1:8765`) to have the Go 
 ### Do This In Order (Source Build)
 
 ```bash
-cd /Users/cole/Projects/gulfchain/DeskOps
+# from gulfchain root
+cd DeskOps
 direnv allow
 make setup
 createdb deskops
 make migrate
 make up
 ```
+
+`make up` and `./deskops` also start the multigate-backtest API automatically, using `BACKTEST_API_BASE` or the default `http://127.0.0.1:8765`.
 
 Verify:
 
@@ -76,14 +80,6 @@ npm run dev -- --host 127.0.0.1 --port 8888
 
 The UI uses same-origin proxies (`/api/...` and `/api/fastapi/...`), so it works cleanly across LAN devices without CORS issues. Make sure the Go API and FastAPI are running.
 
-If `BACKTEST_API_BASE` is set, start the backtest API first:
-
-```bash
-cd /Users/cole/Projects/gulfchain/multigate-backtest
-source .venv/bin/activate
-python scripts/db_tool.py web --host 127.0.0.1 --port 8765
-```
-
 ## Import backtest data (SQLite -> Postgres)
 
 ```bash
@@ -101,6 +97,7 @@ Notes:
 - `/` Landing
 - `/console` Console & dashboard
 - `/backtest` Multigate backtest
+- `/quant` Quant agent chat, experiment controls and background research ([guide](docs/QUANT.md))
 - `/gulf-sync` GulfSync governance
 - `/communities` Communities & socials
 - `/docs` Development/docs

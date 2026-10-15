@@ -1097,6 +1097,31 @@
       "visibility": "internal",
       "owner": "cole",
       "meta": {}
+    },
+    {
+      "id": "multigate-backtest-matricies-risk-gate-tuning-matrix-orb-baseline-ga1-ryanbmd",
+      "title": "ORB Baseline Matrix: GA1_RYANB",
+      "summary": "Single-candidate baseline matrix for Strategy_002_ORB across all configured underlyings, with GA1_RYANB selected from prior profitability evidence.",
+      "tags": [
+        "multigate",
+        "matrix",
+        "orb",
+        "risk-gate",
+        "ga1_ryanb"
+      ],
+      "source_path": "multigate-backtest/matricies/risk_gate_tuning_matrix_ORB_BASELINE_GA1_RYANB.md",
+      "source_repo": "multigate-backtest",
+      "type": "doc",
+      "created_at": "2026-05-19T02:16:00+00:00",
+      "updated_at": "2026-05-19T02:16:00+00:00",
+      "status": "active",
+      "visibility": "internal",
+      "owner": "cole",
+      "meta": {
+        "doc_kind": "matrix",
+        "audience": "internal",
+        "section": "backtest"
+      }
     }
   ],
   "schema": {

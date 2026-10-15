@@ -1,4 +1,5 @@
 <script>
+  import { page } from '$app/stores';
   export let open = false;
   export let onToggle;
   export let theme = 'dark';
@@ -36,9 +37,33 @@
       <a href="/">Home</a>
       <a href="/console">Console</a>
       <a href="/backtest">Backtest</a>
+      <a class="icon-link" href="/quant" aria-current={$page.url.pathname === '/quant' ? 'page' : undefined}>
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <path d="M4 17l5-6 4 3 7-9M4 5v14h16" />
+        </svg>
+        <span>Quant</span>
+      </a>
+      <a class="icon-link" href="/walk-forward-visuals">
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <path d="M3 19h18M5 16l4-4 3 2 5-6 2 1" />
+          <circle cx="9" cy="12" r="1.2" />
+          <circle cx="12" cy="14" r="1.2" />
+          <circle cx="17" cy="8" r="1.2" />
+        </svg>
+        <span>WF Visuals</span>
+      </a>
       <a href="/gulf-sync">GulfSync</a>
       <a href="/charts">Charts</a>
+      <a class="icon-link" href="/mystic-pools">
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <path d="M4 16c2 0 2-1.5 4-1.5s2 1.5 4 1.5 2-1.5 4-1.5 2 1.5 4 1.5" />
+          <path d="M5 11c1.8 0 1.8-1.25 3.6-1.25S10.4 11 12.2 11s1.8-1.25 3.6-1.25S17.6 11 19.4 11" />
+          <path d="M7 6h10" />
+        </svg>
+        <span>Mystic</span>
+      </a>
       <a href="/communities">Communities</a>
+      <a href="/about">About</a>
       <a href="/docs">Docs</a>
     </div>
   </div>
@@ -130,7 +155,9 @@
 
   .links {
     display: flex;
-    gap: 1rem;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 0.85rem;
     font-size: 0.9rem;
     text-transform: uppercase;
     letter-spacing: 0.08em;
@@ -146,6 +173,27 @@
   .links a:hover {
     border-color: var(--accent);
     color: var(--accent);
+  }
+
+  .links a[aria-current='page'] {
+    color: var(--accent);
+    border-color: var(--accent);
+  }
+
+  .icon-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+  }
+
+  .icon-link svg {
+    width: 14px;
+    height: 14px;
+    stroke: currentColor;
+    fill: none;
+    stroke-width: 1.9;
+    stroke-linecap: round;
+    stroke-linejoin: round;
   }
 
   @media (max-width: 900px) {

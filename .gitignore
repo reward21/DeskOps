@@ -50,3 +50,23 @@ dist/
 # Editor/IDE
 # .idea/
 # .vscode/
+
+# Tightened 2026-10-15
+# Secret variants (keep any committed *.env.example templates)
+.env.*
+!.env.example
+*.key
+*.pem
+
+# Local SQLite (e.g. db/llm_memory.sqlite) and sidecars
+*.sqlite
+*.sqlite3
+*.sqlite-wal
+*.sqlite-shm
+*.sqlite-journal
+*.db
+
+# SvelteKit/adapter build and test output
+/apps/web/build/
+test-results/
+playwright-report/

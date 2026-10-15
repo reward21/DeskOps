@@ -1,0 +1,1311 @@
+{
+  "connection": {
+    "model": "qwen3.5:9b",
+    "online": true,
+    "model_available": true
+  },
+  "http_checks": [
+    {
+      "name": "overview",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "name": "foreign origin",
+      "status": 403,
+      "passed": true
+    },
+    {
+      "name": "plain text body",
+      "status": 415,
+      "passed": true
+    },
+    {
+      "name": "malformed JSON",
+      "status": 400,
+      "passed": true
+    },
+    {
+      "name": "oversize JSON",
+      "status": 413,
+      "passed": true
+    },
+    {
+      "name": "unsupported operation",
+      "status": 400,
+      "passed": true
+    },
+    {
+      "name": "invalid session ID",
+      "status": 400,
+      "passed": true
+    },
+    {
+      "name": "unsupported view",
+      "status": 400,
+      "passed": true
+    },
+    {
+      "name": "unsupported action",
+      "status": 400,
+      "passed": true
+    },
+    {
+      "name": "retry accepted request",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "name": "retry leaves all conversation files unchanged",
+      "passed": true
+    },
+    {
+      "name": "conflicting retry rejected",
+      "status": 400,
+      "passed": true
+    },
+    {
+      "name": "final experiment",
+      "status": 200,
+      "passed": true
+    }
+  ],
+  "session_id": "e7263ca47eca43459f4646b9caf617c2",
+  "experiment": {
+    "experiment_id": "c0740c8e82f44f22a444abe04ffb7eeb",
+    "name": "DeskOps ORB control test",
+    "strategy_id": "Strategy_002_ORB",
+    "gate_id": "GA1_RYANB",
+    "revision": 2,
+    "documents": {
+      "strategy": {
+        "strategy_id": "Strategy_002_ORB",
+        "name": "15m Opening Range Breakout",
+        "version": "v1",
+        "status": "implemented_mvp",
+        "type": "intraday",
+        "description": "Opening range breakout on 1m bars (15-minute window) with ATR-based risk sizing, one trade per symbol per session.",
+        "symbols": [
+          "SPY"
+        ],
+        "timeframe": "1m",
+        "rth_only": true,
+        "inputs": {
+          "orb_minutes": 15,
+          "session_start": "09:45",
+          "atr_length": 14,
+          "atr_mult": 1,
+          "entry_confirm": "close_break",
+          "entry_delay_bars": 1
+        },
+        "execution": {
+          "exit_policy": "strategy",
+          "entry_timing": "open",
+          "bar_minutes": 1,
+          "commission_per_unit": 0,
+          "commission_per_order": 0,
+          "slippage_bps": 0,
+          "same_bar_policy": "stop_first",
+          "gap_fill": "open",
+          "session_close": "16:00",
+          "kill_action": "block_entries"
+        }
+      },
+      "gate": {
+        "SPEC_VERSION": "RISK_GATE_MULTI_GATES_G0-G5_v1_2026-01-29",
+        "denial_reason_codes": [
+          "RISK_DAILY_KILL",
+          "RISK_PER_TRADE_CAP",
+          "RISK_OVERSIZE",
+          "RISK_MAX_TRADES",
+          "RISK_LOSS_STREAK",
+          "RISK_COOLDOWN",
+          "SESSION_PRE_945",
+          "SESSION_POST_300",
+          "SESSION_FORCE_FLAT",
+          "VOL_VIX_BLOCK",
+          "LIQ_SPREAD",
+          "LIQ_VOLUME",
+          "LIQ_OPEN_INTEREST",
+          "ADD_TO_LOSER_BLOCK",
+          "OVERNIGHT_BLOCK",
+          "REENTRY_BLOCK",
+          "AVG_DOWN_BLOCK"
+        ],
+        "gate_id": "GA1_RYANB",
+        "name": "RyanB Aggressive Swing Gate (Overnight Allowed)",
+        "rules": {
+          "denial_reason_map": "CANONICAL_1TO1",
+          "per_trade_risk_cap": {
+            "enabled": true,
+            "max_risk_pct_equity": 0.7,
+            "max_units": 7000
+          },
+          "max_open_positions": {
+            "enabled": true,
+            "max_positions": 2
+          },
+          "max_trades_per_day": {
+            "enabled": true,
+            "max_trades": 3
+          },
+          "max_consecutive_losses": {
+            "enabled": true,
+            "max_losses": 6
+          },
+          "daily_kill_switch": {
+            "enabled": true,
+            "max_intraday_dd_pct": 4
+          },
+          "cooldown_minutes_after_stop": {
+            "enabled": true,
+            "minutes": 15
+          },
+          "reentry_policy": {
+            "enabled": true,
+            "max_reentries_per_day": 1
+          },
+          "avg_down_policy": {
+            "enabled": true,
+            "mode": "DISALLOW"
+          },
+          "overnight_block": {
+            "enabled": false
+          },
+          "session_rules": {
+            "enabled": false,
+            "force_flat_at": "15:30:00",
+            "no_entry_before": "09:45:00",
+            "no_new_entry_after": "15:00:00",
+            "tz": "US/Eastern"
+          },
+          "liquidity_filters": {
+            "enabled": false,
+            "max_spread_pct": null,
+            "min_open_interest": null,
+            "min_volume": null
+          },
+          "vix_regime_filter": {
+            "enabled": false,
+            "allowed_regimes": [
+              "LOW",
+              "NORMAL",
+              "HIGH"
+            ]
+          }
+        }
+      },
+      "config": {
+        "paths": {
+          "data_path": "/Volumes/OWC/gulfchain/multigate-backtest/data/ingested/databento/spy/arcx-ohlcv-1m/spy-arcx-pillar-ohlcv-1m.parquet",
+          "gates_dir": "/Volumes/OWC/gulfchain/multigate-backtest/runs/quant/workspaces/c0740c8e82f44f22a444abe04ffb7eeb/revisions/0002/gates",
+          "db_path": "/Volumes/OWC/gulfchain/multigate-backtest/runs/quant/workspaces/c0740c8e82f44f22a444abe04ffb7eeb/revisions/0002/backtests.sqlite",
+          "artifacts_dir": "/Volumes/OWC/gulfchain/multigate-backtest/runs/quant/workspaces/c0740c8e82f44f22a444abe04ffb7eeb/revisions/0002/artifacts"
+        },
+        "runtime": {
+          "timezone": "America/New_York",
+          "enforce_rth": true,
+          "rth_start": "09:45",
+          "rth_end": "16:00",
+          "date_start": "2025-01-02",
+          "date_end": "2025-01-08",
+          "disable_batch_charts": false,
+          "start_equity": 100000,
+          "symbol_legs": [
+            {
+              "symbol": "SPY",
+              "data_path": "/Volumes/OWC/gulfchain/multigate-backtest/data/ingested/databento/spy/arcx-ohlcv-1m/spy-arcx-pillar-ohlcv-1m.parquet",
+              "bias": "long_short"
+            }
+          ],
+          "default_bias": "long_short",
+          "chart_gate_id": "GA1_RYANB"
+        },
+        "strategies": {
+          "strategy_id": "Strategy_002_ORB",
+          "strategy_ids": [
+            "Strategy_002_ORB"
+          ],
+          "strategies_dir": "/Volumes/OWC/gulfchain/multigate-backtest/runs/quant/workspaces/c0740c8e82f44f22a444abe04ffb7eeb/revisions/0002/strategies"
+        },
+        "gates": {
+          "gate_ids": [
+            "GA1_RYANB"
+          ],
+          "spec_version": "RISK_GATE_MULTI_GATES_G0-G5_v1_2026-01-29"
+        },
+        "data_features": {
+          "compute_vix_regime": true,
+          "attach_features_json": true
+        },
+        "tuning": {
+          "window_months": 12,
+          "step_months": 3,
+          "min_trades": 15,
+          "cpu_threads": 10,
+          "limit_windows": null,
+          "risk_gate_matrix": "/Volumes/OWC/gulfchain/multigate-backtest/runs/quant/workspaces/c0740c8e82f44f22a444abe04ffb7eeb/revisions/0002/risk_gate_matrix.json"
+        }
+      },
+      "matrix": {
+        "notes": [
+          "Generated from this revision of the gate."
+        ],
+        "proposed_grid": {
+          "GA1_RYANB": [
+            {
+              "tag": "ga1_ryanb_risk_70",
+              "tier": "strict",
+              "axis": "risk_cap",
+              "risk_pct": 0.49,
+              "max_units": 4900,
+              "max_losses": 6,
+              "max_trades": 3,
+              "kill": 4,
+              "cooldown": 15,
+              "vix": [
+                "LOW",
+                "NORMAL",
+                "HIGH"
+              ]
+            },
+            {
+              "tag": "ga1_ryanb_risk_85",
+              "tier": "balanced",
+              "axis": "risk_cap",
+              "risk_pct": 0.595,
+              "max_units": 5950,
+              "max_losses": 6,
+              "max_trades": 3,
+              "kill": 4,
+              "cooldown": 15,
+              "vix": [
+                "LOW",
+                "NORMAL",
+                "HIGH"
+              ]
+            },
+            {
+              "tag": "ga1_ryanb_risk_100",
+              "tier": "baseline",
+              "axis": "risk_cap",
+              "risk_pct": 0.7,
+              "max_units": 7000,
+              "max_losses": 6,
+              "max_trades": 3,
+              "kill": 4,
+              "cooldown": 15,
+              "vix": [
+                "LOW",
+                "NORMAL",
+                "HIGH"
+              ]
+            },
+            {
+              "tag": "ga1_ryanb_risk_114",
+              "tier": "growth",
+              "axis": "risk_cap",
+              "risk_pct": 0.805,
+              "max_units": 8050,
+              "max_losses": 6,
+              "max_trades": 3,
+              "kill": 4,
+              "cooldown": 15,
+              "vix": [
+                "LOW",
+                "NORMAL",
+                "HIGH"
+              ]
+            },
+            {
+              "tag": "ga1_ryanb_risk_130",
+              "tier": "growth",
+              "axis": "risk_cap",
+              "risk_pct": 0.91,
+              "max_units": 9100,
+              "max_losses": 6,
+              "max_trades": 3,
+              "kill": 4,
+              "cooldown": 15,
+              "vix": [
+                "LOW",
+                "NORMAL",
+                "HIGH"
+              ]
+            },
+            {
+              "tag": "ga1_ryanb_kill_80",
+              "tier": "strict",
+              "axis": "kill_switch",
+              "risk_pct": 0.7,
+              "max_units": 7000,
+              "max_losses": 6,
+              "max_trades": 3,
+              "kill": 3,
+              "cooldown": 15,
+              "vix": [
+                "LOW",
+                "NORMAL",
+                "HIGH"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "execution_context": {
+      "instrument": "SPY underlying shares",
+      "options_backtesting_supported": false,
+      "exit_policy": "strategy",
+      "engine_stop_target_policy_active": false,
+      "daily_kill_action": "block_entries",
+      "overnight_block_enabled": false,
+      "gross_exposure_limit": {
+        "enabled": false
+      },
+      "modeled_costs": {
+        "commission_per_unit": 0,
+        "commission_per_order": 0,
+        "slippage_bps": 0
+      },
+      "parameter_effects": {
+        "inputs.orb_minutes": "opening range and entry signals",
+        "inputs.session_start": "opening-range timing within the configured data session",
+        "inputs.entry_delay_bars": "entry timing after the breakout",
+        "inputs.atr_length": "ATR estimate used for stop/target distances and risk sizing",
+        "inputs.atr_mult": "risk sizing distance; intrabar stop/target execution is inactive",
+        "inputs.target_atr_mult": "profit-target distance independent of the stop; defaults to atr_mult when omitted. Only changes realized exits with stop_target policy."
+      },
+      "notes": [
+        "Results measure SPY underlying shares, not option contracts, premiums, Greeks or option fills.",
+        "Risk per trade is a position-sizing budget based on stop distance, not a guaranteed realized-loss cap.",
+        "The engine sizes from equity * risk_pct / 100 / stop_distance. max_units and gross-exposure gates REJECT oversized orders; they do not resize them. Use rejection counts to diagnose zero or few trades.",
+        "Compare measured returns and drawdown; reducing exposure alone does not establish a better entry signal.",
+        "ORB creates at most one candidate trade per symbol/session; changing daily trade limits above one cannot add signals.",
+        "ORB uses session-end strategy exits unless forced earlier. ATR multiplier changes sizing distance, not an active intrabar stop under this exit policy.",
+        "Daily kill only blocks subsequent entries. It does not close an existing position or cap its loss.",
+        "Commissions and slippage are all zero in this configuration; report that assumption."
+      ]
+    },
+    "gate_metric_units": {
+      "trade_count": "trades",
+      "win_rate": "fraction",
+      "pf": "ratio",
+      "expectancy": "USD per trade",
+      "maxdd": "USD (signed drawdown)",
+      "worst_day": "USD",
+      "worst_trade": "USD",
+      "avg_hold": "minutes",
+      "zero_trade_day_pct": "fraction",
+      "ending_equity": "USD"
+    },
+    "research_settings": {
+      "max_iterations": 10,
+      "max_seconds": 3600,
+      "max_no_improvement": 5,
+      "max_consecutive_errors": 3,
+      "max_run_seconds": 300,
+      "max_matrix_candidates": 32,
+      "validation_fraction": 0.25,
+      "min_trades": 30,
+      "max_drawdown_pct": 5,
+      "min_excess_return_pct": 0,
+      "min_strategy_return_pct": 0,
+      "objective": {
+        "metric": "excess_return_pct_points",
+        "direction": "maximize"
+      },
+      "metrics": {},
+      "constraints": [],
+      "parameters": {},
+      "diversify_parameters": false
+    },
+    "revision_record": "/Volumes/OWC/gulfchain/multigate-backtest/runs/quant/workspaces/c0740c8e82f44f22a444abe04ffb7eeb/revisions/0002/revision.json",
+    "test_results": [
+      {
+        "experiment_id": "c0740c8e82f44f22a444abe04ffb7eeb",
+        "revision": 2,
+        "attempt_path": "/Volumes/OWC/gulfchain/multigate-backtest/runs/quant/workspaces/c0740c8e82f44f22a444abe04ffb7eeb/attempts/f0954096ad774a628052e949b0e3218f",
+        "config_path": "/Volumes/OWC/gulfchain/multigate-backtest/runs/quant/workspaces/c0740c8e82f44f22a444abe04ffb7eeb/attempts/f0954096ad774a628052e949b0e3218f/inputs/config.yaml",
+        "mode": "single",
+        "status": "completed",
+        "backtest_executed": true,
+        "returncode": 0,
+        "reports": [
+          "/Volumes/OWC/gulfchain/multigate-backtest/runs/quant/workspaces/c0740c8e82f44f22a444abe04ffb7eeb/attempts/f0954096ad774a628052e949b0e3218f/artifacts/runs/20260915_015753_e854aaf4/reports/20260915_015753_e854aaf4_multigate_report.json"
+        ],
+        "gate_metrics": [
+          {
+            "run_id": "20260915_015753_e854aaf4",
+            "gate_id": "GA1_RYANB",
+            "trade_count": 5,
+            "win_rate": 0.4,
+            "pf": 0.6393,
+            "expectancy": -1257.5454,
+            "maxdd": -20767.5461,
+            "worst_day": -7038.1254,
+            "worst_trade": -7038.1254,
+            "avg_hold": 353.4,
+            "zero_trade_day_pct": 0,
+            "ending_equity": 93712.2729
+          }
+        ],
+        "gate_metric_units": {
+          "trade_count": "trades",
+          "win_rate": "fraction",
+          "pf": "ratio",
+          "expectancy": "USD per trade",
+          "maxdd": "USD (signed drawdown)",
+          "worst_day": "USD",
+          "worst_trade": "USD",
+          "avg_hold": "minutes",
+          "zero_trade_day_pct": "fraction",
+          "ending_equity": "USD"
+        },
+        "gate_pass_fail": [
+          {
+            "gate_id": "GA1_RYANB",
+            "pass": 5,
+            "fail": 0
+          }
+        ],
+        "gate_denials": [],
+        "stderr_tail": "Matplotlib is building the font cache; this may take a moment.\n",
+        "finished_at_utc": "2026-09-15T01:58:10.280364+00:00",
+        "window": [
+          "2025-01-02",
+          "2025-01-08"
+        ]
+      },
+      {
+        "experiment_id": "c0740c8e82f44f22a444abe04ffb7eeb",
+        "revision": 2,
+        "attempt_path": "/Volumes/OWC/gulfchain/multigate-backtest/runs/quant/workspaces/c0740c8e82f44f22a444abe04ffb7eeb/attempts/2e2bf3ce1e36415b96282ced4366d99a",
+        "config_path": "/Volumes/OWC/gulfchain/multigate-backtest/runs/quant/workspaces/c0740c8e82f44f22a444abe04ffb7eeb/attempts/2e2bf3ce1e36415b96282ced4366d99a/inputs/config.yaml",
+        "mode": "single",
+        "status": "cancelled",
+        "backtest_executed": true,
+        "returncode": -9,
+        "reports": [],
+        "stderr_tail": "Matplotlib is building the font cache; this may take a moment.\n",
+        "finished_at_utc": "2026-09-15T01:58:54.996751+00:00",
+        "window": [
+          "2025-01-02",
+          "2025-01-06"
+        ]
+      }
+    ],
+    "research": [
+      {
+        "experiment_id": "c0740c8e82f44f22a444abe04ffb7eeb",
+        "job_id": "0afc114fdcec426babbad7355360504b",
+        "status": "stopped",
+        "starting_revision": 2,
+        "status_path": "/Volumes/OWC/gulfchain/multigate-backtest/runs/quant/workspaces/c0740c8e82f44f22a444abe04ffb7eeb/research/0afc114fdcec426babbad7355360504b/status.json",
+        "log_path": "/Volumes/OWC/gulfchain/multigate-backtest/runs/quant/workspaces/c0740c8e82f44f22a444abe04ffb7eeb/research/0afc114fdcec426babbad7355360504b/worker.log",
+        "created_at_utc": "2026-09-15T01:58:40.299991+00:00",
+        "pid": 81868,
+        "policy": {
+          "max_iterations": 10,
+          "max_seconds": 3600,
+          "max_no_improvement": 5,
+          "max_consecutive_errors": 3,
+          "max_run_seconds": 300,
+          "max_matrix_candidates": 32,
+          "validation_fraction": 0.25,
+          "min_trades": 30,
+          "max_drawdown_pct": 5,
+          "min_excess_return_pct": 0,
+          "min_strategy_return_pct": 0,
+          "objective": {
+            "direction": "maximize",
+            "metric": "excess_return_pct_points"
+          },
+          "metrics": {},
+          "constraints": [],
+          "parameters": {},
+          "diversify_parameters": false
+        },
+        "development": [
+          "2025-01-02",
+          "2025-01-06"
+        ],
+        "validation": [
+          "2025-01-07",
+          "2025-01-08"
+        ],
+        "execution_context": {
+          "instrument": "SPY underlying shares",
+          "options_backtesting_supported": false,
+          "exit_policy": "strategy",
+          "engine_stop_target_policy_active": false,
+          "daily_kill_action": "block_entries",
+          "overnight_block_enabled": false,
+          "gross_exposure_limit": {
+            "enabled": false
+          },
+          "modeled_costs": {
+            "commission_per_unit": 0,
+            "commission_per_order": 0,
+            "slippage_bps": 0
+          },
+          "parameter_effects": {
+            "inputs.orb_minutes": "opening range and entry signals",
+            "inputs.session_start": "opening-range timing within the configured data session",
+            "inputs.entry_delay_bars": "entry timing after the breakout",
+            "inputs.atr_length": "ATR estimate used for stop/target distances and risk sizing",
+            "inputs.atr_mult": "risk sizing distance; intrabar stop/target execution is inactive",
+            "inputs.target_atr_mult": "profit-target distance independent of the stop; defaults to atr_mult when omitted. Only changes realized exits with stop_target policy."
+          },
+          "notes": [
+            "Results measure SPY underlying shares, not option contracts, premiums, Greeks or option fills.",
+            "Risk per trade is a position-sizing budget based on stop distance, not a guaranteed realized-loss cap.",
+            "The engine sizes from equity * risk_pct / 100 / stop_distance. max_units and gross-exposure gates REJECT oversized orders; they do not resize them. Use rejection counts to diagnose zero or few trades.",
+            "Compare measured returns and drawdown; reducing exposure alone does not establish a better entry signal.",
+            "ORB creates at most one candidate trade per symbol/session; changing daily trade limits above one cannot add signals.",
+            "ORB uses session-end strategy exits unless forced earlier. ATR multiplier changes sizing distance, not an active intrabar stop under this exit policy.",
+            "Daily kill only blocks subsequent entries. It does not close an existing position or cap its loss.",
+            "Commissions and slippage are all zero in this configuration; report that assumption."
+          ]
+        },
+        "benchmark": "SPY price return after modeled costs, not statistical alpha; excludes dividends",
+        "validation_reused": true,
+        "target_met": false,
+        "successful_evaluations": 0,
+        "failed_iterations": 1,
+        "no_improvement_iterations": 0,
+        "current_iteration": 1,
+        "phase": "finished",
+        "latest_revision": 2,
+        "stop_reason": "requested",
+        "error": "Backtest evaluation failed: Matplotlib is building the font cache; this may take a moment.. Attempt: /Volumes/OWC/gulfchain/multigate-backtest/runs/quant/workspaces/c0740c8e82f44f22a444abe04ffb7eeb/attempts/2e2bf3ce1e36415b96282ced4366d99a",
+        "last_error": {
+          "iteration": 1,
+          "phase": "development_backtest",
+          "message": "Backtest evaluation failed: Matplotlib is building the font cache; this may take a moment.. Attempt: /Volumes/OWC/gulfchain/multigate-backtest/runs/quant/workspaces/c0740c8e82f44f22a444abe04ffb7eeb/attempts/2e2bf3ce1e36415b96282ced4366d99a"
+        },
+        "iterations": 1,
+        "best_revision": null,
+        "proposal_base_revision": 2,
+        "best_development": null,
+        "best_validation": null,
+        "last_decision": "error",
+        "finished_at_utc": "2026-09-15T01:58:54.998247+00:00"
+      }
+    ]
+  },
+  "protected_input_hashes": {
+    "/Volumes/OWC/gulfchain/multigate-backtest/config.yaml": {
+      "expected": "17bf01554a44c124eb48ad91c6bc33fb85e5a43a51c4ef6f5e854fccca936566",
+      "actual": "17bf01554a44c124eb48ad91c6bc33fb85e5a43a51c4ef6f5e854fccca936566"
+    },
+    "/Volumes/OWC/gulfchain/multigate-backtest/quant.py": {
+      "expected": "a55db439f2e6210871b44094d39152a23dcab561010e22c219fe80f3529289cd",
+      "actual": "a55db439f2e6210871b44094d39152a23dcab561010e22c219fe80f3529289cd"
+    },
+    "/Volumes/OWC/gulfchain/multigate-backtest/agent/quant/quant.yaml": {
+      "expected": "d77b71cca6d539845a320baa77d3118d8e41462def51aec2d370382ccf6327ad",
+      "actual": "d77b71cca6d539845a320baa77d3118d8e41462def51aec2d370382ccf6327ad"
+    },
+    "/Volumes/OWC/gulfchain/multigate-backtest/backtest": {
+      "expected": "27c996d0237b2968631cb844bb001b5bf1fb5d6911934211403f68a684255e76",
+      "actual": "27c996d0237b2968631cb844bb001b5bf1fb5d6911934211403f68a684255e76"
+    },
+    "/Volumes/OWC/gulfchain/multigate-backtest/gates/G2.json": {
+      "expected": "6d52ff97505b7b0bb2984a3e6295a5dd3c7c78cdc299ec58f8fd9d6340c14063",
+      "actual": "6d52ff97505b7b0bb2984a3e6295a5dd3c7c78cdc299ec58f8fd9d6340c14063"
+    },
+    "/Volumes/OWC/gulfchain/multigate-backtest/gates/G3.json": {
+      "expected": "67ffce28fdb42a5925487bc96e1c6a119538f841e48eab119e5fddf5b593d875",
+      "actual": "67ffce28fdb42a5925487bc96e1c6a119538f841e48eab119e5fddf5b593d875"
+    },
+    "/Volumes/OWC/gulfchain/multigate-backtest/gates/GC1_COLEF.json": {
+      "expected": "c5c1fa2b0aacb6ad6e2e11ba76ebbb791a267f46bd7ad8acbeeea1e9e5a161af",
+      "actual": "c5c1fa2b0aacb6ad6e2e11ba76ebbb791a267f46bd7ad8acbeeea1e9e5a161af"
+    },
+    "/Volumes/OWC/gulfchain/multigate-backtest/gates/G4.json": {
+      "expected": "eb1046b12579ef48da2042253bb993fd4b6d186f026b6457f7dbe0cfa5a5dda5",
+      "actual": "eb1046b12579ef48da2042253bb993fd4b6d186f026b6457f7dbe0cfa5a5dda5"
+    },
+    "/Volumes/OWC/gulfchain/multigate-backtest/gates/GC2_COLEF_INTRADAY.json": {
+      "expected": "2482fae8e3902ef235cbab73bec1d52e5ab4e0c7bce38467f7c9d07987170fdb",
+      "actual": "2482fae8e3902ef235cbab73bec1d52e5ab4e0c7bce38467f7c9d07987170fdb"
+    },
+    "/Volumes/OWC/gulfchain/multigate-backtest/gates/G5.json": {
+      "expected": "ae14758c47b1e1b168b5f55156cedfe5a8729df4d792e42065d1e7c146c290cd",
+      "actual": "ae14758c47b1e1b168b5f55156cedfe5a8729df4d792e42065d1e7c146c290cd"
+    },
+    "/Volumes/OWC/gulfchain/multigate-backtest/gates/G1_INV.json": {
+      "expected": "ba69beb97dd4525a77ce62cb9fdf72d7cdf749c446e873b2bd24181e960911fc",
+      "actual": "ba69beb97dd4525a77ce62cb9fdf72d7cdf749c446e873b2bd24181e960911fc"
+    },
+    "/Volumes/OWC/gulfchain/multigate-backtest/gates/GA1_RYANB.json": {
+      "expected": "a461f44a1dff9fa7eb3233bfdfe415ed091d1f22672c4c5763fc52a6eac620bc",
+      "actual": "a461f44a1dff9fa7eb3233bfdfe415ed091d1f22672c4c5763fc52a6eac620bc"
+    },
+    "/Volumes/OWC/gulfchain/multigate-backtest/gates/G0.json": {
+      "expected": "f675343ab8aa7adeaeff4f1e87a40a6884cef08e386af5c5b199edda8950243f",
+      "actual": "f675343ab8aa7adeaeff4f1e87a40a6884cef08e386af5c5b199edda8950243f"
+    },
+    "/Volumes/OWC/gulfchain/multigate-backtest/gates/G1.json": {
+      "expected": "bf9c760994af6c9b86c7275ca7fcf5ad96a47f622780861cf5fde8be54082ae7",
+      "actual": "bf9c760994af6c9b86c7275ca7fcf5ad96a47f622780861cf5fde8be54082ae7"
+    },
+    "/Volumes/OWC/gulfchain/multigate-backtest/strategies/SESSION_PLACEHOLDER.json": {
+      "expected": "eb6e5d922d8ad02d107f613c7cd922537c38fb27bbccaac26ee724c6d45bd2dc",
+      "actual": "eb6e5d922d8ad02d107f613c7cd922537c38fb27bbccaac26ee724c6d45bd2dc"
+    },
+    "/Volumes/OWC/gulfchain/multigate-backtest/strategies/strategy_tuning_matrix.json": {
+      "expected": "5e3c8c3f225399e88a61552b5b162f4f1ee00142bf87007dfa3ccb67c4398bf0",
+      "actual": "5e3c8c3f225399e88a61552b5b162f4f1ee00142bf87007dfa3ccb67c4398bf0"
+    },
+    "/Volumes/OWC/gulfchain/multigate-backtest/strategies/Strategy_CF_001_SPY_TSLA_VWAP_MR.json": {
+      "expected": "eb978e2240c0bd039f74c4d0e0ba0316b8e4ddbf83ad3bee5d28ee659b995dea",
+      "actual": "eb978e2240c0bd039f74c4d0e0ba0316b8e4ddbf83ad3bee5d28ee659b995dea"
+    },
+    "/Volumes/OWC/gulfchain/multigate-backtest/strategies/Strategy_RB_001_FlushReboundSwing.json": {
+      "expected": "cc1accf35d61e065433753eccca90822c40ee05ccf886dd6c50eb64c1e656d61",
+      "actual": "cc1accf35d61e065433753eccca90822c40ee05ccf886dd6c50eb64c1e656d61"
+    },
+    "/Volumes/OWC/gulfchain/multigate-backtest/strategies/MULTIGATE_PAIR_TSLA_SHORT_SPY_LONG_v1.json": {
+      "expected": "e39ba9871556ffdc73962e7e7942757bebf8da9db795ed9bdfc1209e067d61f7",
+      "actual": "e39ba9871556ffdc73962e7e7942757bebf8da9db795ed9bdfc1209e067d61f7"
+    },
+    "/Volumes/OWC/gulfchain/multigate-backtest/strategies/Strategy_003_VWAP_MR.json": {
+      "expected": "e48e514e40b0704195edef9555c597da9ea586cf7c6af059965da9997fa2a3ed",
+      "actual": "e48e514e40b0704195edef9555c597da9ea586cf7c6af059965da9997fa2a3ed"
+    },
+    "/Volumes/OWC/gulfchain/multigate-backtest/strategies/Strategy_CF_002_SPY_TSLA_VWAP_MR_INTRADAY.json": {
+      "expected": "4fddc0fa2fb9b8b163e37b9dbcf8ddce56a727ff2bb68aa4515608ba45e511c1",
+      "actual": "4fddc0fa2fb9b8b163e37b9dbcf8ddce56a727ff2bb68aa4515608ba45e511c1"
+    },
+    "/Volumes/OWC/gulfchain/multigate-backtest/strategies/Strategy_001_SPY_VWAP_Reclaim.json": {
+      "expected": "7fe1e0abc43520a8d781544990b3e7236f8d78ab429eb5ae3004cde1b074802e",
+      "actual": "7fe1e0abc43520a8d781544990b3e7236f8d78ab429eb5ae3004cde1b074802e"
+    },
+    "/Volumes/OWC/gulfchain/multigate-backtest/strategies/Strategy_002_ORB.json": {
+      "expected": "81445faa6b53cf71258c5734a644b21ece5c2110c743b73cb5302f03a76ed896",
+      "actual": "81445faa6b53cf71258c5734a644b21ece5c2110c743b73cb5302f03a76ed896"
+    },
+    "/Volumes/OWC/gulfchain/multigate-backtest/strategies/MULTIGATE_BASELINE_v1.json": {
+      "expected": "e0988af73a39226f9883f8bc42262fd866e5bfceefc3423b1602f6bad68e67f1",
+      "actual": "e0988af73a39226f9883f8bc42262fd866e5bfceefc3423b1602f6bad68e67f1"
+    },
+    "/Volumes/OWC/gulfchain/multigate-backtest/matricies/risk_gate_tuning_matrix_G1-ORB.json": {
+      "expected": "216140a9281520411bf6653c91ed4917e1071d7489219ea1973ebd8cef6af481",
+      "actual": "216140a9281520411bf6653c91ed4917e1071d7489219ea1973ebd8cef6af481"
+    },
+    "/Volumes/OWC/gulfchain/multigate-backtest/matricies/risk_gate_tuning_matrix_ORB_BASELINE_GA1_RYANB.json": {
+      "expected": "d9bf92c690795fdfe7b6a52597765c016dec27fa8848b8e88c3a9eaf98b340c6",
+      "actual": "d9bf92c690795fdfe7b6a52597765c016dec27fa8848b8e88c3a9eaf98b340c6"
+    },
+    "/Volumes/OWC/gulfchain/multigate-backtest/matricies/strategy_tuning_matrix_G2_ORB_MATRIX.json": {
+      "expected": "7192a72ba878a35b641b7b5f37e5f9ada94efdf69ea696f59713dc0374ed3bcf",
+      "actual": "7192a72ba878a35b641b7b5f37e5f9ada94efdf69ea696f59713dc0374ed3bcf"
+    },
+    "/Volumes/OWC/gulfchain/multigate-backtest/matricies/strategy_tuning_matrix.json": {
+      "expected": "db861b6428a2b43b7b1f011a74e2f7a77331c8ca8c5ee4a3acbaebf70cc24018",
+      "actual": "db861b6428a2b43b7b1f011a74e2f7a77331c8ca8c5ee4a3acbaebf70cc24018"
+    },
+    "/Volumes/OWC/gulfchain/multigate-backtest/matricies/risk_gate_tuning_matrix_COVERAGE_GAPS.json": {
+      "expected": "eae6464be996b6877b8ea595ae55de6165136daafbdd176684aa55919368e77c",
+      "actual": "eae6464be996b6877b8ea595ae55de6165136daafbdd176684aa55919368e77c"
+    },
+    "/Volumes/OWC/gulfchain/multigate-backtest/matricies/risk_gate_tuning_matrix_RB_MATRIX.json": {
+      "expected": "6d9e61876fe538bdb5d365bd3933a43ec8fffafd8999fd5f0d334214f7d582a4",
+      "actual": "6d9e61876fe538bdb5d365bd3933a43ec8fffafd8999fd5f0d334214f7d582a4"
+    },
+    "/Volumes/OWC/gulfchain/multigate-backtest/matricies/risk_gate_tuning_matrix_COLEF_INTRADAY.json": {
+      "expected": "8fbfaf2f6bb40574ef25468d061f2c4a57761a3d0d17657230346de405b465ce",
+      "actual": "8fbfaf2f6bb40574ef25468d061f2c4a57761a3d0d17657230346de405b465ce"
+    },
+    "/Volumes/OWC/gulfchain/multigate-backtest/matricies/strategy_tuning_matrix_COVERAGE_GAPS.json": {
+      "expected": "4bf2f0da5361548e2e169a4e059b10a6ac6f687dc978b08924414e04143fb592",
+      "actual": "4bf2f0da5361548e2e169a4e059b10a6ac6f687dc978b08924414e04143fb592"
+    },
+    "/Volumes/OWC/gulfchain/multigate-backtest/matricies/risk_gate_tuning_matrix_G2_ORB_MATRIX.json": {
+      "expected": "d9d950c02d761470a3ed47c5240cb6d0c2dabee31110c06cabd24ea442cc3675",
+      "actual": "d9d950c02d761470a3ed47c5240cb6d0c2dabee31110c06cabd24ea442cc3675"
+    },
+    "/Volumes/OWC/gulfchain/multigate-backtest/matricies/risk_gate_tuning_matrix_G1_EXTREME.json": {
+      "expected": "4db40d192841440ce2823c5cefd8d3da77a2541189a0363852193d176b0e228f",
+      "actual": "4db40d192841440ce2823c5cefd8d3da77a2541189a0363852193d176b0e228f"
+    },
+    "/Volumes/OWC/gulfchain/multigate-backtest/matricies/risk_gate_tuning_matrix_GA1_RYANB.json": {
+      "expected": "c5586b62c5e87ac2d87c335f25fc5ccb4473f8a6776f466b9f87d944c74ce4c8",
+      "actual": "c5586b62c5e87ac2d87c335f25fc5ccb4473f8a6776f466b9f87d944c74ce4c8"
+    },
+    "/Volumes/OWC/gulfchain/multigate-backtest/matricies/strategy_tuning_matrix_Strategy_101_FlushReboundSwing.json": {
+      "expected": "cc69bb3fa1c6ae3e9afb14133fde8dbb68ad39a0c50e5abc93175bbb556b51e8",
+      "actual": "cc69bb3fa1c6ae3e9afb14133fde8dbb68ad39a0c50e5abc93175bbb556b51e8"
+    },
+    "/Volumes/OWC/gulfchain/multigate-backtest/matricies/risk_gate_tuning_matrix.json": {
+      "expected": "f5b69977d6f8b37b77867baf957e44aabf033a83e74d9c3dfe08e868ac56ec7e",
+      "actual": "f5b69977d6f8b37b77867baf957e44aabf033a83e74d9c3dfe08e868ac56ec7e"
+    },
+    "/Volumes/OWC/gulfchain/multigate-backtest/matricies/strategy_tuning_matrix_Strategy_CF_001_SPY_TSLA_VWAP_MR.json": {
+      "expected": "f1e2138e26fbc14239467fed30946fd93cf16f330ba025f9a5831c502e33ca8a",
+      "actual": "f1e2138e26fbc14239467fed30946fd93cf16f330ba025f9a5831c502e33ca8a"
+    },
+    "/Volumes/OWC/gulfchain/multigate-backtest/matricies/risk_gate_tuning_matrix_G2.json": {
+      "expected": "0b4a6afe3cd8e71671c0374afa7abb23b01b387077f4422b271f1bfb9511c039",
+      "actual": "0b4a6afe3cd8e71671c0374afa7abb23b01b387077f4422b271f1bfb9511c039"
+    },
+    "/Volumes/OWC/gulfchain/multigate-backtest/matricies/strategy_tuning_matrix_G1-ORB.json": {
+      "expected": "3c6f1ae49bec23ef9ac7e32c54b0c349498cead0ed145f4bde8eab5e044f91d0",
+      "actual": "3c6f1ae49bec23ef9ac7e32c54b0c349498cead0ed145f4bde8eab5e044f91d0"
+    },
+    "/Volumes/OWC/gulfchain/multigate-backtest/matricies/strategy_tuning_matrix_Strategy_CF_002_SPY_TSLA_VWAP_MR_INTRADAY.json": {
+      "expected": "e4788ded2206526fef2b3e2e745858b0aefe5f2828cd0804c95b59f499634be0",
+      "actual": "e4788ded2206526fef2b3e2e745858b0aefe5f2828cd0804c95b59f499634be0"
+    },
+    "/Volumes/OWC/gulfchain/multigate-backtest/matricies/risk_gate_tuning_matrix_COLEF.json": {
+      "expected": "8ed608c32dedc3b61dab4cb13cdb17122a14af9b394b3dc84b2a4fc99310713e",
+      "actual": "8ed608c32dedc3b61dab4cb13cdb17122a14af9b394b3dc84b2a4fc99310713e"
+    },
+    "/Volumes/OWC/gulfchain/multigate-backtest/matricies/strategy_tuning_matrix_RB_MATRIX.json": {
+      "expected": "64ed138a748d45cf13dc1f922bc34b48ca7d2ae56b028cacbbab8786a3ad92a9",
+      "actual": "64ed138a748d45cf13dc1f922bc34b48ca7d2ae56b028cacbbab8786a3ad92a9"
+    },
+    "/Volumes/OWC/gulfchain/multigate-backtest/matricies/strategy_tuning_matrix_RYANB.json": {
+      "expected": "4763cf4734207f03e980e101eb4ec50d82570016a47f4c5edb67ad1082b6c5de",
+      "actual": "4763cf4734207f03e980e101eb4ec50d82570016a47f4c5edb67ad1082b6c5de"
+    },
+    "/Volumes/OWC/gulfchain/multigate-backtest/matricies/risk_gate_tuning_matrix_RYANB.json": {
+      "expected": "6e60eb3d2e45dd1ba4a04a59da4463b9397fb75e3232196addc4fa4496b6ac9d",
+      "actual": "6e60eb3d2e45dd1ba4a04a59da4463b9397fb75e3232196addc4fa4496b6ac9d"
+    },
+    "/Volumes/OWC/gulfchain/multigate-backtest/runs/quant/workspaces/da5e3299a52d468db455bbde70a42558/experiment.json": {
+      "expected": "5aef69dbabf2977bf575522ba9b3d54adc6dcfd41ec498c6e1ec481aaeb1d090",
+      "actual": "5aef69dbabf2977bf575522ba9b3d54adc6dcfd41ec498c6e1ec481aaeb1d090"
+    }
+  },
+  "during_research_snapshot": {
+    "ok": true,
+    "experiment": {
+      "experiment_id": "c0740c8e82f44f22a444abe04ffb7eeb",
+      "name": "DeskOps ORB control test",
+      "strategy_id": "Strategy_002_ORB",
+      "gate_id": "GA1_RYANB",
+      "revision": 2,
+      "documents": {
+        "strategy": {
+          "strategy_id": "Strategy_002_ORB",
+          "name": "15m Opening Range Breakout",
+          "version": "v1",
+          "status": "implemented_mvp",
+          "type": "intraday",
+          "description": "Opening range breakout on 1m bars (15-minute window) with ATR-based risk sizing, one trade per symbol per session.",
+          "symbols": [
+            "SPY"
+          ],
+          "timeframe": "1m",
+          "rth_only": true,
+          "inputs": {
+            "orb_minutes": 15,
+            "session_start": "09:45",
+            "atr_length": 14,
+            "atr_mult": 1,
+            "entry_confirm": "close_break",
+            "entry_delay_bars": 1
+          },
+          "execution": {
+            "exit_policy": "strategy",
+            "entry_timing": "open",
+            "bar_minutes": 1,
+            "commission_per_unit": 0,
+            "commission_per_order": 0,
+            "slippage_bps": 0,
+            "same_bar_policy": "stop_first",
+            "gap_fill": "open",
+            "session_close": "16:00",
+            "kill_action": "block_entries"
+          }
+        },
+        "gate": {
+          "SPEC_VERSION": "RISK_GATE_MULTI_GATES_G0-G5_v1_2026-01-29",
+          "denial_reason_codes": [
+            "RISK_DAILY_KILL",
+            "RISK_PER_TRADE_CAP",
+            "RISK_OVERSIZE",
+            "RISK_MAX_TRADES",
+            "RISK_LOSS_STREAK",
+            "RISK_COOLDOWN",
+            "SESSION_PRE_945",
+            "SESSION_POST_300",
+            "SESSION_FORCE_FLAT",
+            "VOL_VIX_BLOCK",
+            "LIQ_SPREAD",
+            "LIQ_VOLUME",
+            "LIQ_OPEN_INTEREST",
+            "ADD_TO_LOSER_BLOCK",
+            "OVERNIGHT_BLOCK",
+            "REENTRY_BLOCK",
+            "AVG_DOWN_BLOCK"
+          ],
+          "gate_id": "GA1_RYANB",
+          "name": "RyanB Aggressive Swing Gate (Overnight Allowed)",
+          "rules": {
+            "denial_reason_map": "CANONICAL_1TO1",
+            "per_trade_risk_cap": {
+              "enabled": true,
+              "max_risk_pct_equity": 0.7,
+              "max_units": 7000
+            },
+            "max_open_positions": {
+              "enabled": true,
+              "max_positions": 2
+            },
+            "max_trades_per_day": {
+              "enabled": true,
+              "max_trades": 3
+            },
+            "max_consecutive_losses": {
+              "enabled": true,
+              "max_losses": 6
+            },
+            "daily_kill_switch": {
+              "enabled": true,
+              "max_intraday_dd_pct": 4
+            },
+            "cooldown_minutes_after_stop": {
+              "enabled": true,
+              "minutes": 15
+            },
+            "reentry_policy": {
+              "enabled": true,
+              "max_reentries_per_day": 1
+            },
+            "avg_down_policy": {
+              "enabled": true,
+              "mode": "DISALLOW"
+            },
+            "overnight_block": {
+              "enabled": false
+            },
+            "session_rules": {
+              "enabled": false,
+              "force_flat_at": "15:30:00",
+              "no_entry_before": "09:45:00",
+              "no_new_entry_after": "15:00:00",
+              "tz": "US/Eastern"
+            },
+            "liquidity_filters": {
+              "enabled": false,
+              "max_spread_pct": null,
+              "min_open_interest": null,
+              "min_volume": null
+            },
+            "vix_regime_filter": {
+              "enabled": false,
+              "allowed_regimes": [
+                "LOW",
+                "NORMAL",
+                "HIGH"
+              ]
+            }
+          }
+        },
+        "config": {
+          "paths": {
+            "data_path": "/Volumes/OWC/gulfchain/multigate-backtest/data/ingested/databento/spy/arcx-ohlcv-1m/spy-arcx-pillar-ohlcv-1m.parquet",
+            "gates_dir": "/Volumes/OWC/gulfchain/multigate-backtest/runs/quant/workspaces/c0740c8e82f44f22a444abe04ffb7eeb/revisions/0002/gates",
+            "db_path": "/Volumes/OWC/gulfchain/multigate-backtest/runs/quant/workspaces/c0740c8e82f44f22a444abe04ffb7eeb/revisions/0002/backtests.sqlite",
+            "artifacts_dir": "/Volumes/OWC/gulfchain/multigate-backtest/runs/quant/workspaces/c0740c8e82f44f22a444abe04ffb7eeb/revisions/0002/artifacts"
+          },
+          "runtime": {
+            "timezone": "America/New_York",
+            "enforce_rth": true,
+            "rth_start": "09:45",
+            "rth_end": "16:00",
+            "date_start": "2025-01-02",
+            "date_end": "2025-01-08",
+            "disable_batch_charts": false,
+            "start_equity": 100000,
+            "symbol_legs": [
+              {
+                "symbol": "SPY",
+                "data_path": "/Volumes/OWC/gulfchain/multigate-backtest/data/ingested/databento/spy/arcx-ohlcv-1m/spy-arcx-pillar-ohlcv-1m.parquet",
+                "bias": "long_short"
+              }
+            ],
+            "default_bias": "long_short",
+            "chart_gate_id": "GA1_RYANB"
+          },
+          "strategies": {
+            "strategy_id": "Strategy_002_ORB",
+            "strategy_ids": [
+              "Strategy_002_ORB"
+            ],
+            "strategies_dir": "/Volumes/OWC/gulfchain/multigate-backtest/runs/quant/workspaces/c0740c8e82f44f22a444abe04ffb7eeb/revisions/0002/strategies"
+          },
+          "gates": {
+            "gate_ids": [
+              "GA1_RYANB"
+            ],
+            "spec_version": "RISK_GATE_MULTI_GATES_G0-G5_v1_2026-01-29"
+          },
+          "data_features": {
+            "compute_vix_regime": true,
+            "attach_features_json": true
+          },
+          "tuning": {
+            "window_months": 12,
+            "step_months": 3,
+            "min_trades": 15,
+            "cpu_threads": 10,
+            "limit_windows": null,
+            "risk_gate_matrix": "/Volumes/OWC/gulfchain/multigate-backtest/runs/quant/workspaces/c0740c8e82f44f22a444abe04ffb7eeb/revisions/0002/risk_gate_matrix.json"
+          }
+        },
+        "matrix": {
+          "notes": [
+            "Generated from this revision of the gate."
+          ],
+          "proposed_grid": {
+            "GA1_RYANB": [
+              {
+                "tag": "ga1_ryanb_risk_70",
+                "tier": "strict",
+                "axis": "risk_cap",
+                "risk_pct": 0.49,
+                "max_units": 4900,
+                "max_losses": 6,
+                "max_trades": 3,
+                "kill": 4,
+                "cooldown": 15,
+                "vix": [
+                  "LOW",
+                  "NORMAL",
+                  "HIGH"
+                ]
+              },
+              {
+                "tag": "ga1_ryanb_risk_85",
+                "tier": "balanced",
+                "axis": "risk_cap",
+                "risk_pct": 0.595,
+                "max_units": 5950,
+                "max_losses": 6,
+                "max_trades": 3,
+                "kill": 4,
+                "cooldown": 15,
+                "vix": [
+                  "LOW",
+                  "NORMAL",
+                  "HIGH"
+                ]
+              },
+              {
+                "tag": "ga1_ryanb_risk_100",
+                "tier": "baseline",
+                "axis": "risk_cap",
+                "risk_pct": 0.7,
+                "max_units": 7000,
+                "max_losses": 6,
+                "max_trades": 3,
+                "kill": 4,
+                "cooldown": 15,
+                "vix": [
+                  "LOW",
+                  "NORMAL",
+                  "HIGH"
+                ]
+              },
+              {
+                "tag": "ga1_ryanb_risk_114",
+                "tier": "growth",
+                "axis": "risk_cap",
+                "risk_pct": 0.805,
+                "max_units": 8050,
+                "max_losses": 6,
+                "max_trades": 3,
+                "kill": 4,
+                "cooldown": 15,
+                "vix": [
+                  "LOW",
+                  "NORMAL",
+                  "HIGH"
+                ]
+              },
+              {
+                "tag": "ga1_ryanb_risk_130",
+                "tier": "growth",
+                "axis": "risk_cap",
+                "risk_pct": 0.91,
+                "max_units": 9100,
+                "max_losses": 6,
+                "max_trades": 3,
+                "kill": 4,
+                "cooldown": 15,
+                "vix": [
+                  "LOW",
+                  "NORMAL",
+                  "HIGH"
+                ]
+              },
+              {
+                "tag": "ga1_ryanb_kill_80",
+                "tier": "strict",
+                "axis": "kill_switch",
+                "risk_pct": 0.7,
+                "max_units": 7000,
+                "max_losses": 6,
+                "max_trades": 3,
+                "kill": 3,
+                "cooldown": 15,
+                "vix": [
+                  "LOW",
+                  "NORMAL",
+                  "HIGH"
+                ]
+              }
+            ]
+          }
+        }
+      },
+      "execution_context": {
+        "instrument": "SPY underlying shares",
+        "options_backtesting_supported": false,
+        "exit_policy": "strategy",
+        "engine_stop_target_policy_active": false,
+        "daily_kill_action": "block_entries",
+        "overnight_block_enabled": false,
+        "gross_exposure_limit": {
+          "enabled": false
+        },
+        "modeled_costs": {
+          "commission_per_unit": 0,
+          "commission_per_order": 0,
+          "slippage_bps": 0
+        },
+        "parameter_effects": {
+          "inputs.orb_minutes": "opening range and entry signals",
+          "inputs.session_start": "opening-range timing within the configured data session",
+          "inputs.entry_delay_bars": "entry timing after the breakout",
+          "inputs.atr_length": "ATR estimate used for stop/target distances and risk sizing",
+          "inputs.atr_mult": "risk sizing distance; intrabar stop/target execution is inactive",
+          "inputs.target_atr_mult": "profit-target distance independent of the stop; defaults to atr_mult when omitted. Only changes realized exits with stop_target policy."
+        },
+        "notes": [
+          "Results measure SPY underlying shares, not option contracts, premiums, Greeks or option fills.",
+          "Risk per trade is a position-sizing budget based on stop distance, not a guaranteed realized-loss cap.",
+          "The engine sizes from equity * risk_pct / 100 / stop_distance. max_units and gross-exposure gates REJECT oversized orders; they do not resize them. Use rejection counts to diagnose zero or few trades.",
+          "Compare measured returns and drawdown; reducing exposure alone does not establish a better entry signal.",
+          "ORB creates at most one candidate trade per symbol/session; changing daily trade limits above one cannot add signals.",
+          "ORB uses session-end strategy exits unless forced earlier. ATR multiplier changes sizing distance, not an active intrabar stop under this exit policy.",
+          "Daily kill only blocks subsequent entries. It does not close an existing position or cap its loss.",
+          "Commissions and slippage are all zero in this configuration; report that assumption."
+        ]
+      },
+      "gate_metric_units": {
+        "trade_count": "trades",
+        "win_rate": "fraction",
+        "pf": "ratio",
+        "expectancy": "USD per trade",
+        "maxdd": "USD (signed drawdown)",
+        "worst_day": "USD",
+        "worst_trade": "USD",
+        "avg_hold": "minutes",
+        "zero_trade_day_pct": "fraction",
+        "ending_equity": "USD"
+      },
+      "research_settings": {
+        "max_iterations": 10,
+        "max_seconds": 3600,
+        "max_no_improvement": 5,
+        "max_consecutive_errors": 3,
+        "max_run_seconds": 300,
+        "max_matrix_candidates": 32,
+        "validation_fraction": 0.25,
+        "min_trades": 30,
+        "max_drawdown_pct": 5,
+        "min_excess_return_pct": 0,
+        "min_strategy_return_pct": 0,
+        "objective": {
+          "metric": "excess_return_pct_points",
+          "direction": "maximize"
+        },
+        "metrics": {},
+        "constraints": [],
+        "parameters": {},
+        "diversify_parameters": false
+      },
+      "revision_record": "/Volumes/OWC/gulfchain/multigate-backtest/runs/quant/workspaces/c0740c8e82f44f22a444abe04ffb7eeb/revisions/0002/revision.json",
+      "test_results": [
+        {
+          "experiment_id": "c0740c8e82f44f22a444abe04ffb7eeb",
+          "revision": 2,
+          "attempt_path": "/Volumes/OWC/gulfchain/multigate-backtest/runs/quant/workspaces/c0740c8e82f44f22a444abe04ffb7eeb/attempts/f0954096ad774a628052e949b0e3218f",
+          "config_path": "/Volumes/OWC/gulfchain/multigate-backtest/runs/quant/workspaces/c0740c8e82f44f22a444abe04ffb7eeb/attempts/f0954096ad774a628052e949b0e3218f/inputs/config.yaml",
+          "mode": "single",
+          "status": "completed",
+          "backtest_executed": true,
+          "returncode": 0,
+          "reports": [
+            "/Volumes/OWC/gulfchain/multigate-backtest/runs/quant/workspaces/c0740c8e82f44f22a444abe04ffb7eeb/attempts/f0954096ad774a628052e949b0e3218f/artifacts/runs/20260915_015753_e854aaf4/reports/20260915_015753_e854aaf4_multigate_report.json"
+          ],
+          "gate_metrics": [
+            {
+              "run_id": "20260915_015753_e854aaf4",
+              "gate_id": "GA1_RYANB",
+              "trade_count": 5,
+              "win_rate": 0.4,
+              "pf": 0.6393,
+              "expectancy": -1257.5454,
+              "maxdd": -20767.5461,
+              "worst_day": -7038.1254,
+              "worst_trade": -7038.1254,
+              "avg_hold": 353.4,
+              "zero_trade_day_pct": 0,
+              "ending_equity": 93712.2729
+            }
+          ],
+          "gate_metric_units": {
+            "trade_count": "trades",
+            "win_rate": "fraction",
+            "pf": "ratio",
+            "expectancy": "USD per trade",
+            "maxdd": "USD (signed drawdown)",
+            "worst_day": "USD",
+            "worst_trade": "USD",
+            "avg_hold": "minutes",
+            "zero_trade_day_pct": "fraction",
+            "ending_equity": "USD"
+          },
+          "gate_pass_fail": [
+            {
+              "gate_id": "GA1_RYANB",
+              "pass": 5,
+              "fail": 0
+            }
+          ],
+          "gate_denials": [],
+          "stderr_tail": "Matplotlib is building the font cache; this may take a moment.\n",
+          "finished_at_utc": "2026-09-15T01:58:10.280364+00:00",
+          "window": [
+            "2025-01-02",
+            "2025-01-08"
+          ]
+        },
+        {
+          "experiment_id": "c0740c8e82f44f22a444abe04ffb7eeb",
+          "revision": 2,
+          "attempt_path": "/Volumes/OWC/gulfchain/multigate-backtest/runs/quant/workspaces/c0740c8e82f44f22a444abe04ffb7eeb/attempts/2e2bf3ce1e36415b96282ced4366d99a",
+          "config_path": "/Volumes/OWC/gulfchain/multigate-backtest/runs/quant/workspaces/c0740c8e82f44f22a444abe04ffb7eeb/attempts/2e2bf3ce1e36415b96282ced4366d99a/inputs/config.yaml",
+          "mode": "single",
+          "status": "running",
+          "backtest_executed": true,
+          "window": [
+            "2025-01-02",
+            "2025-01-06"
+          ]
+        }
+      ],
+      "research": [
+        {
+          "experiment_id": "c0740c8e82f44f22a444abe04ffb7eeb",
+          "job_id": "0afc114fdcec426babbad7355360504b",
+          "status": "running",
+          "starting_revision": 2,
+          "status_path": "/Volumes/OWC/gulfchain/multigate-backtest/runs/quant/workspaces/c0740c8e82f44f22a444abe04ffb7eeb/research/0afc114fdcec426babbad7355360504b/status.json",
+          "log_path": "/Volumes/OWC/gulfchain/multigate-backtest/runs/quant/workspaces/c0740c8e82f44f22a444abe04ffb7eeb/research/0afc114fdcec426babbad7355360504b/worker.log",
+          "created_at_utc": "2026-09-15T01:58:40.299991+00:00",
+          "pid": 81868,
+          "policy": {
+            "max_iterations": 10,
+            "max_seconds": 3600,
+            "max_no_improvement": 5,
+            "max_consecutive_errors": 3,
+            "max_run_seconds": 300,
+            "max_matrix_candidates": 32,
+            "validation_fraction": 0.25,
+            "min_trades": 30,
+            "max_drawdown_pct": 5,
+            "min_excess_return_pct": 0,
+            "min_strategy_return_pct": 0,
+            "objective": {
+              "direction": "maximize",
+              "metric": "excess_return_pct_points"
+            },
+            "metrics": {},
+            "constraints": [],
+            "parameters": {},
+            "diversify_parameters": false
+          },
+          "development": [
+            "2025-01-02",
+            "2025-01-06"
+          ],
+          "validation": [
+            "2025-01-07",
+            "2025-01-08"
+          ],
+          "execution_context": {
+            "instrument": "SPY underlying shares",
+            "options_backtesting_supported": false,
+            "exit_policy": "strategy",
+            "engine_stop_target_policy_active": false,
+            "daily_kill_action": "block_entries",
+            "overnight_block_enabled": false,
+            "gross_exposure_limit": {
+              "enabled": false
+            },
+            "modeled_costs": {
+              "commission_per_unit": 0,
+              "commission_per_order": 0,
+              "slippage_bps": 0
+            },
+            "parameter_effects": {
+              "inputs.orb_minutes": "opening range and entry signals",
+              "inputs.session_start": "opening-range timing within the configured data session",
+              "inputs.entry_delay_bars": "entry timing after the breakout",
+              "inputs.atr_length": "ATR estimate used for stop/target distances and risk sizing",
+              "inputs.atr_mult": "risk sizing distance; intrabar stop/target execution is inactive",
+              "inputs.target_atr_mult": "profit-target distance independent of the stop; defaults to atr_mult when omitted. Only changes realized exits with stop_target policy."
+            },
+            "notes": [
+              "Results measure SPY underlying shares, not option contracts, premiums, Greeks or option fills.",
+              "Risk per trade is a position-sizing budget based on stop distance, not a guaranteed realized-loss cap.",
+              "The engine sizes from equity * risk_pct / 100 / stop_distance. max_units and gross-exposure gates REJECT oversized orders; they do not resize them. Use rejection counts to diagnose zero or few trades.",
+              "Compare measured returns and drawdown; reducing exposure alone does not establish a better entry signal.",
+              "ORB creates at most one candidate trade per symbol/session; changing daily trade limits above one cannot add signals.",
+              "ORB uses session-end strategy exits unless forced earlier. ATR multiplier changes sizing distance, not an active intrabar stop under this exit policy.",
+              "Daily kill only blocks subsequent entries. It does not close an existing position or cap its loss.",
+              "Commissions and slippage are all zero in this configuration; report that assumption."
+            ]
+          },
+          "benchmark": "SPY price return after modeled costs, not statistical alpha; excludes dividends",
+          "validation_reused": true,
+          "target_met": false,
+          "successful_evaluations": 0,
+          "failed_iterations": 0,
+          "no_improvement_iterations": 0,
+          "current_iteration": 1,
+          "phase": "development_backtest",
+          "latest_revision": 2
+        }
+      ]
+    }
+  },
+  "python_tests": {
+    "passed": 91,
+    "seconds": 139.273,
+    "log": "quant_gui_2026-09-14_tests.log"
+  },
+  "web_build": {
+    "passed": true,
+    "log": "quant_gui_2026-09-14_build.log"
+  },
+  "browser_checks": {
+    "reload_during_request": "passed",
+    "auto_select_created_experiment": "passed",
+    "matrix_button": "passed",
+    "backtest_button": "passed",
+    "research_start_stop": "passed",
+    "console_errors": [],
+    "desktop_document_overflow": false,
+    "phone_document_overflow": false,
+    "viewport_override_reset": true
+  }
+}

@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"strconv"
 	"strings"
 	"time"
 
@@ -28,6 +29,8 @@ func (a *API) Handler() http.Handler {
 	mux.HandleFunc("GET /v1/backtests/runs", a.handleRuns)
 	mux.HandleFunc("GET /v1/backtests/run", a.handleRunByID)
 	mux.HandleFunc("POST /v1/backtests/query", a.handleQuery)
+	mux.HandleFunc("GET /v1/backtests/schema", a.handleSchema)
+	mux.HandleFunc("GET /v1/backtests/schema-profile", a.handleSchemaProfile)
 	mux.HandleFunc("GET /v1/settings", a.handleSettings)
 	mux.HandleFunc("POST /v1/settings", a.handleSettingsUpdate)
 	return loggingMiddleware(mux)
@@ -42,11 +45,18 @@ func (a *API) handleRuns(w http.ResponseWriter, r *http.Request) {
 	defer cancel()
 	if a.backtest != nil {
 		items, err := a.fetchRunsFromBacktest(ctx)
-		if err != nil {
-			writeJSON(w, http.StatusBadGateway, map[string]string{"error": err.Error()})
+		if err == nil {
+			writeJSON(w, http.StatusOK, map[string]interface{}{"items": items, "count": len(items)})
 			return
 		}
-		writeJSON(w, http.StatusOK, map[string]interface{}{"items": items, "count": len(items)})
+		log.Printf("backtest runs fetch failed, falling back to postgres: %v", err)
+		if a.db == nil {
+			writeJSON(w, http.StatusBadGateway, map[string]string{"error": "backtest api unavailable and postgres fallback is not configured"})
+			return
+		}
+	}
+	if a.db == nil {
+		writeJSON(w, http.StatusServiceUnavailable, map[string]string{"error": "no backtest data source available"})
 		return
 	}
 
@@ -85,15 +95,22 @@ func (a *API) handleRunByID(w http.ResponseWriter, r *http.Request) {
 
 	if a.backtest != nil {
 		item, found, err := a.fetchRunDetailFromBacktest(ctx, runID)
-		if err != nil {
-			writeJSON(w, http.StatusBadGateway, map[string]string{"error": err.Error()})
+		if err == nil {
+			if !found {
+				writeJSON(w, http.StatusNotFound, map[string]string{"error": "run not found"})
+				return
+			}
+			writeJSON(w, http.StatusOK, item)
 			return
 		}
-		if !found {
-			writeJSON(w, http.StatusNotFound, map[string]string{"error": "run not found"})
+		log.Printf("backtest run detail fetch failed, falling back to postgres: run_id=%s err=%v", runID, err)
+		if a.db == nil {
+			writeJSON(w, http.StatusBadGateway, map[string]string{"error": "backtest api unavailable and postgres fallback is not configured"})
 			return
 		}
-		writeJSON(w, http.StatusOK, item)
+	}
+	if a.db == nil {
+		writeJSON(w, http.StatusServiceUnavailable, map[string]string{"error": "no backtest data source available"})
 		return
 	}
 
@@ -164,6 +181,53 @@ func (a *API) handleQuery(w http.ResponseWriter, r *http.Request) {
 	ctx, cancel := context.WithTimeout(r.Context(), 20*time.Second)
 	defer cancel()
 	res, err := a.backtest.Query(ctx, sqlText, limit)
+	if err != nil {
+		writeJSON(w, http.StatusBadGateway, map[string]string{"error": err.Error()})
+		return
+	}
+	writeJSON(w, http.StatusOK, res)
+}
+
+func (a *API) handleSchema(w http.ResponseWriter, r *http.Request) {
+	if a.backtest == nil {
+		writeJSON(w, http.StatusServiceUnavailable, map[string]string{"error": "backtest api not configured"})
+		return
+	}
+	table := strings.TrimSpace(r.URL.Query().Get("table"))
+	if table == "" {
+		writeJSON(w, http.StatusBadRequest, map[string]string{"error": "table is required"})
+		return
+	}
+	ctx, cancel := context.WithTimeout(r.Context(), 10*time.Second)
+	defer cancel()
+	res, err := a.backtest.Schema(ctx, table)
+	if err != nil {
+		writeJSON(w, http.StatusBadGateway, map[string]string{"error": err.Error()})
+		return
+	}
+	writeJSON(w, http.StatusOK, res)
+}
+
+func (a *API) handleSchemaProfile(w http.ResponseWriter, r *http.Request) {
+	if a.backtest == nil {
+		writeJSON(w, http.StatusServiceUnavailable, map[string]string{"error": "backtest api not configured"})
+		return
+	}
+	limit := 200
+	if raw := strings.TrimSpace(r.URL.Query().Get("limit")); raw != "" {
+		if parsed, err := strconv.Atoi(raw); err == nil {
+			limit = parsed
+		}
+	}
+	if limit <= 0 {
+		limit = 200
+	}
+	if limit > 2000 {
+		limit = 2000
+	}
+	ctx, cancel := context.WithTimeout(r.Context(), 20*time.Second)
+	defer cancel()
+	res, err := a.backtest.SchemaProfile(ctx, limit)
 	if err != nil {
 		writeJSON(w, http.StatusBadGateway, map[string]string{"error": err.Error()})
 		return

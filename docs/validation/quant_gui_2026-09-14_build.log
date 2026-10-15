@@ -1,0 +1,466 @@
+
+> deskops-web@0.1.0 build
+> vite build
+
+vite v5.4.21 building SSR bundle for production...
+transforming...
+9:01:12 PM [vite-plugin-svelte] /Volumes/OWC/gulfchain/DeskOps/apps/web/src/routes/backtest/+page.svelte:1184:12 A11y: A form label must be associated with a control.
+1182:           </div>
+1183:           <div class="config-row">
+1184:             <label>Layout Mode</label>
+                  ^
+1185:             <div class="pill-group">
+1186:               <button
+9:01:12 PM [vite-plugin-svelte] /Volumes/OWC/gulfchain/DeskOps/apps/web/src/routes/backtest/+page.svelte:1201:12 A11y: A form label must be associated with a control.
+1199:           </div>
+1200:           <div class="config-row">
+1201:             <label>Split</label>
+                  ^
+1202:             <div class="range-row">
+1203:               <input
+9:01:12 PM [vite-plugin-svelte] /Volumes/OWC/gulfchain/DeskOps/apps/web/src/routes/backtest/+page.svelte:1214:12 A11y: A form label must be associated with a control.
+1212:           </div>
+1213:           <div class="config-row">
+1214:             <label>Density</label>
+                  ^
+1215:             <select on:change={(e) => setDensity(e.currentTarget.value)} value={viewConfig.density}>
+1216:               {#each densityOptions as opt}
+9:01:12 PM [vite-plugin-svelte] /Volumes/OWC/gulfchain/DeskOps/apps/web/src/routes/backtest/+page.svelte:1289:12 A11y: A form label must be associated with a control.
+1287:           </label>
+1288:           <div class="config-row">
+1289:             <label>Interval (sec)</label>
+                  ^
+1290:             <input
+1291:               type="number"
+9:01:12 PM [vite-plugin-svelte] /Volumes/OWC/gulfchain/DeskOps/apps/web/src/routes/backtest/+page.svelte:1330:12 A11y: A form label must be associated with a control.
+1328:           <h4>Default Filters</h4>
+1329:           <div class="config-row">
+1330:             <label>Trade tab</label>
+                  ^
+1331:             <select
+1332:               on:change={(e) => updateDefault('tradeTab', e.currentTarget.value)}
+9:01:12 PM [vite-plugin-svelte] /Volumes/OWC/gulfchain/DeskOps/apps/web/src/routes/backtest/+page.svelte:1341:12 A11y: A form label must be associated with a control.
+1339:           </div>
+1340:           <div class="config-row">
+1341:             <label>Run filter</label>
+                  ^
+1342:             <input
+1343:               type="text"
+9:01:12 PM [vite-plugin-svelte] /Volumes/OWC/gulfchain/DeskOps/apps/web/src/routes/backtest/+page.svelte:1349:12 A11y: A form label must be associated with a control.
+1347:           </div>
+1348:           <div class="config-row">
+1349:             <label>Run type</label>
+                  ^
+1350:             <select
+1351:               on:change={(e) => updateDefault('runTypeFilter', e.currentTarget.value)}
+9:01:12 PM [vite-plugin-svelte] /Volumes/OWC/gulfchain/DeskOps/apps/web/src/routes/backtest/+page.svelte:1363:12 A11y: A form label must be associated with a control.
+1361:           </div>
+1362:           <div class="config-row">
+1363:             <label>Run source</label>
+                  ^
+1364:             <select
+1365:               on:change={(e) => updateDefault('runSourceFilter', e.currentTarget.value)}
+9:01:12 PM [vite-plugin-svelte] /Volumes/OWC/gulfchain/DeskOps/apps/web/src/routes/backtest/+page.svelte:1375:12 A11y: A form label must be associated with a control.
+1373:           </div>
+1374:           <div class="config-row">
+1375:             <label>Run time</label>
+                  ^
+1376:             <select
+1377:               on:change={(e) => updateDefault('runTimeFilter', e.currentTarget.value)}
+9:01:12 PM [vite-plugin-svelte] /Volumes/OWC/gulfchain/DeskOps/apps/web/src/routes/backtest/+page.svelte:1388:12 A11y: A form label must be associated with a control.
+1386:           </div>
+1387:           <div class="config-row">
+1388:             <label>Trade search</label>
+                  ^
+1389:             <input
+1390:               type="text"
+9:01:12 PM [vite-plugin-svelte] /Volumes/OWC/gulfchain/DeskOps/apps/web/src/routes/backtest/+page.svelte:1396:12 A11y: A form label must be associated with a control.
+1394:           </div>
+1395:           <div class="config-row">
+1396:             <label>Gate filter</label>
+                  ^
+1397:             <input
+1398:               type="text"
+9:01:12 PM [vite-plugin-svelte] /Volumes/OWC/gulfchain/DeskOps/apps/web/src/routes/backtest/+page.svelte:1404:12 A11y: A form label must be associated with a control.
+1402:           </div>
+1403:           <div class="config-row">
+1404:             <label>Side filter</label>
+                  ^
+1405:             <input
+1406:               type="text"
+9:01:12 PM [vite-plugin-svelte] /Volumes/OWC/gulfchain/DeskOps/apps/web/src/routes/backtest/+page.svelte:1412:12 A11y: A form label must be associated with a control.
+1410:           </div>
+1411:           <div class="config-row">
+1412:             <label>Exit filter</label>
+                  ^
+1413:             <input
+1414:               type="text"
+9:01:12 PM [vite-plugin-svelte] /Volumes/OWC/gulfchain/DeskOps/apps/web/src/routes/backtest/+page.svelte:1420:12 A11y: A form label must be associated with a control.
+1418:           </div>
+1419:           <div class="config-row">
+1420:             <label>Decision filter</label>
+                  ^
+1421:             <input
+1422:               type="text"
+9:01:12 PM [vite-plugin-svelte] /Volumes/OWC/gulfchain/DeskOps/apps/web/src/routes/backtest/+page.svelte:1428:12 A11y: A form label must be associated with a control.
+1426:           </div>
+1427:           <div class="config-row">
+1428:             <label>Denial filter</label>
+                  ^
+1429:             <input
+1430:               type="text"
+9:01:12 PM [vite-plugin-svelte] /Volumes/OWC/gulfchain/DeskOps/apps/web/src/routes/backtest/+page.svelte:1593:12 A11y: <div> with dragstart, dragover, drop, dragend handlers must have an ARIA role
+1591:         {#if viewConfig.panels[panelId]}
+1592:           {#if panelId === 'runs'}
+1593:             <div
+                  ^
+1594:               class="panel-wrap"
+1595:               draggable="true"
+9:01:12 PM [vite-plugin-svelte] /Volumes/OWC/gulfchain/DeskOps/apps/web/src/routes/backtest/+page.svelte:1737:12 A11y: <div> with dragstart, dragover, drop, dragend handlers must have an ARIA role
+1735:             </div>
+1736:           {:else if panelId === 'selected'}
+1737:             <div
+                  ^
+1738:               class="panel-wrap"
+1739:               draggable="true"
+9:01:12 PM [vite-plugin-svelte] /Volumes/OWC/gulfchain/DeskOps/apps/web/src/routes/backtest/+page.svelte:1899:12 A11y: <div> with dragstart, dragover, drop, dragend handlers must have an ARIA role
+1897:         {#if viewConfig.panels[panelId]}
+1898:           {#if panelId === 'gateMetrics'}
+1899:             <div
+                  ^
+1900:               class="panel-wrap"
+1901:               draggable="true"
+9:01:12 PM [vite-plugin-svelte] /Volumes/OWC/gulfchain/DeskOps/apps/web/src/routes/backtest/+page.svelte:2110:12 A11y: <div> with dragstart, dragover, drop, dragend handlers must have an ARIA role
+2108:             </div>
+2109:           {:else if panelId === 'tradeProfile'}
+2110:             <div
+                  ^
+2111:               class="panel-wrap"
+2112:               draggable="true"
+9:01:12 PM [vite-plugin-svelte] /Volumes/OWC/gulfchain/DeskOps/apps/web/src/routes/backtest/+page.svelte:2297:24 A11y: A form label must be associated with a control.
+2295:                       </div>
+2296:                       <div class="limit">
+2297:                         <label>Limit</label>
+                              ^
+2298:                         <input type="number" min="1" max="2000" bind:value={queryLimit} />
+2299:                       </div>
+9:01:12 PM [vite-plugin-svelte] /Volumes/OWC/gulfchain/DeskOps/apps/web/src/routes/backtest/+page.svelte:2275:12 A11y: <div> with dragstart, dragover, drop, dragend handlers must have an ARIA role
+2273:         {#if viewConfig.panels[panelId]}
+2274:           {#if panelId === 'advanced'}
+2275:             <div
+                  ^
+2276:               class="panel-wrap"
+2277:               draggable="true"
+9:01:12 PM [vite-plugin-svelte] /Volumes/OWC/gulfchain/DeskOps/apps/web/src/routes/backtest/+page.svelte:2521:12 A11y: <div> with dragstart, dragover, drop, dragend handlers must have an ARIA role
+2519:             </div>
+2520:           {:else if panelId === 'llm'}
+2521:             <div
+                  ^
+2522:               class="panel-wrap"
+2523:               draggable="true"
+9:01:12 PM [vite-plugin-svelte] /Volumes/OWC/gulfchain/DeskOps/apps/web/src/routes/docs/+page.svelte:363:6 A11y: noninteractive element cannot have nonnegative tabIndex value
+361:   {:else}
+362:     <div class="layout">
+363:       <aside
+           ^
+364:         class="tree"
+365:         bind:this={treeEl}
+node_modules/@sveltejs/kit/src/runtime/client/client.js (6:23): "untrack" is not exported by "node_modules/svelte/src/runtime/ssr.js", imported by "node_modules/@sveltejs/kit/src/runtime/client/client.js".
+node_modules/@sveltejs/kit/src/runtime/client/client.js (333:26): "fork" is not exported by "node_modules/svelte/src/runtime/ssr.js", imported by "node_modules/@sveltejs/kit/src/runtime/client/client.js".
+node_modules/@sveltejs/kit/src/runtime/client/client.js (1172:30): "settled" is not exported by "node_modules/svelte/src/runtime/ssr.js", imported by "node_modules/@sveltejs/kit/src/runtime/client/client.js".
+✓ 161 modules transformed.
+rendering chunks...
+vite v5.4.21 building for production...
+transforming...
+9:01:14 PM [vite-plugin-svelte] /Volumes/OWC/gulfchain/DeskOps/apps/web/src/routes/backtest/+page.svelte:1184:12 A11y: A form label must be associated with a control.
+1182:           </div>
+1183:           <div class="config-row">
+1184:             <label>Layout Mode</label>
+                  ^
+1185:             <div class="pill-group">
+1186:               <button
+9:01:14 PM [vite-plugin-svelte] /Volumes/OWC/gulfchain/DeskOps/apps/web/src/routes/backtest/+page.svelte:1201:12 A11y: A form label must be associated with a control.
+1199:           </div>
+1200:           <div class="config-row">
+1201:             <label>Split</label>
+                  ^
+1202:             <div class="range-row">
+1203:               <input
+9:01:14 PM [vite-plugin-svelte] /Volumes/OWC/gulfchain/DeskOps/apps/web/src/routes/backtest/+page.svelte:1214:12 A11y: A form label must be associated with a control.
+1212:           </div>
+1213:           <div class="config-row">
+1214:             <label>Density</label>
+                  ^
+1215:             <select on:change={(e) => setDensity(e.currentTarget.value)} value={viewConfig.density}>
+1216:               {#each densityOptions as opt}
+9:01:14 PM [vite-plugin-svelte] /Volumes/OWC/gulfchain/DeskOps/apps/web/src/routes/backtest/+page.svelte:1289:12 A11y: A form label must be associated with a control.
+1287:           </label>
+1288:           <div class="config-row">
+1289:             <label>Interval (sec)</label>
+                  ^
+1290:             <input
+1291:               type="number"
+9:01:14 PM [vite-plugin-svelte] /Volumes/OWC/gulfchain/DeskOps/apps/web/src/routes/backtest/+page.svelte:1330:12 A11y: A form label must be associated with a control.
+1328:           <h4>Default Filters</h4>
+1329:           <div class="config-row">
+1330:             <label>Trade tab</label>
+                  ^
+1331:             <select
+1332:               on:change={(e) => updateDefault('tradeTab', e.currentTarget.value)}
+9:01:14 PM [vite-plugin-svelte] /Volumes/OWC/gulfchain/DeskOps/apps/web/src/routes/backtest/+page.svelte:1341:12 A11y: A form label must be associated with a control.
+1339:           </div>
+1340:           <div class="config-row">
+1341:             <label>Run filter</label>
+                  ^
+1342:             <input
+1343:               type="text"
+9:01:14 PM [vite-plugin-svelte] /Volumes/OWC/gulfchain/DeskOps/apps/web/src/routes/backtest/+page.svelte:1349:12 A11y: A form label must be associated with a control.
+1347:           </div>
+1348:           <div class="config-row">
+1349:             <label>Run type</label>
+                  ^
+1350:             <select
+1351:               on:change={(e) => updateDefault('runTypeFilter', e.currentTarget.value)}
+9:01:14 PM [vite-plugin-svelte] /Volumes/OWC/gulfchain/DeskOps/apps/web/src/routes/backtest/+page.svelte:1363:12 A11y: A form label must be associated with a control.
+1361:           </div>
+1362:           <div class="config-row">
+1363:             <label>Run source</label>
+                  ^
+1364:             <select
+1365:               on:change={(e) => updateDefault('runSourceFilter', e.currentTarget.value)}
+9:01:14 PM [vite-plugin-svelte] /Volumes/OWC/gulfchain/DeskOps/apps/web/src/routes/backtest/+page.svelte:1375:12 A11y: A form label must be associated with a control.
+1373:           </div>
+1374:           <div class="config-row">
+1375:             <label>Run time</label>
+                  ^
+1376:             <select
+1377:               on:change={(e) => updateDefault('runTimeFilter', e.currentTarget.value)}
+9:01:14 PM [vite-plugin-svelte] /Volumes/OWC/gulfchain/DeskOps/apps/web/src/routes/backtest/+page.svelte:1388:12 A11y: A form label must be associated with a control.
+1386:           </div>
+1387:           <div class="config-row">
+1388:             <label>Trade search</label>
+                  ^
+1389:             <input
+1390:               type="text"
+9:01:14 PM [vite-plugin-svelte] /Volumes/OWC/gulfchain/DeskOps/apps/web/src/routes/backtest/+page.svelte:1396:12 A11y: A form label must be associated with a control.
+1394:           </div>
+1395:           <div class="config-row">
+1396:             <label>Gate filter</label>
+                  ^
+1397:             <input
+1398:               type="text"
+9:01:14 PM [vite-plugin-svelte] /Volumes/OWC/gulfchain/DeskOps/apps/web/src/routes/backtest/+page.svelte:1404:12 A11y: A form label must be associated with a control.
+1402:           </div>
+1403:           <div class="config-row">
+1404:             <label>Side filter</label>
+                  ^
+1405:             <input
+1406:               type="text"
+9:01:14 PM [vite-plugin-svelte] /Volumes/OWC/gulfchain/DeskOps/apps/web/src/routes/backtest/+page.svelte:1412:12 A11y: A form label must be associated with a control.
+1410:           </div>
+1411:           <div class="config-row">
+1412:             <label>Exit filter</label>
+                  ^
+1413:             <input
+1414:               type="text"
+9:01:14 PM [vite-plugin-svelte] /Volumes/OWC/gulfchain/DeskOps/apps/web/src/routes/backtest/+page.svelte:1420:12 A11y: A form label must be associated with a control.
+1418:           </div>
+1419:           <div class="config-row">
+1420:             <label>Decision filter</label>
+                  ^
+1421:             <input
+1422:               type="text"
+9:01:14 PM [vite-plugin-svelte] /Volumes/OWC/gulfchain/DeskOps/apps/web/src/routes/backtest/+page.svelte:1428:12 A11y: A form label must be associated with a control.
+1426:           </div>
+1427:           <div class="config-row">
+1428:             <label>Denial filter</label>
+                  ^
+1429:             <input
+1430:               type="text"
+9:01:14 PM [vite-plugin-svelte] /Volumes/OWC/gulfchain/DeskOps/apps/web/src/routes/backtest/+page.svelte:1593:12 A11y: <div> with dragstart, dragover, drop, dragend handlers must have an ARIA role
+1591:         {#if viewConfig.panels[panelId]}
+1592:           {#if panelId === 'runs'}
+1593:             <div
+                  ^
+1594:               class="panel-wrap"
+1595:               draggable="true"
+9:01:14 PM [vite-plugin-svelte] /Volumes/OWC/gulfchain/DeskOps/apps/web/src/routes/backtest/+page.svelte:1737:12 A11y: <div> with dragstart, dragover, drop, dragend handlers must have an ARIA role
+1735:             </div>
+1736:           {:else if panelId === 'selected'}
+1737:             <div
+                  ^
+1738:               class="panel-wrap"
+1739:               draggable="true"
+9:01:14 PM [vite-plugin-svelte] /Volumes/OWC/gulfchain/DeskOps/apps/web/src/routes/backtest/+page.svelte:1899:12 A11y: <div> with dragstart, dragover, drop, dragend handlers must have an ARIA role
+1897:         {#if viewConfig.panels[panelId]}
+1898:           {#if panelId === 'gateMetrics'}
+1899:             <div
+                  ^
+1900:               class="panel-wrap"
+1901:               draggable="true"
+9:01:14 PM [vite-plugin-svelte] /Volumes/OWC/gulfchain/DeskOps/apps/web/src/routes/backtest/+page.svelte:2110:12 A11y: <div> with dragstart, dragover, drop, dragend handlers must have an ARIA role
+2108:             </div>
+2109:           {:else if panelId === 'tradeProfile'}
+2110:             <div
+                  ^
+2111:               class="panel-wrap"
+2112:               draggable="true"
+9:01:14 PM [vite-plugin-svelte] /Volumes/OWC/gulfchain/DeskOps/apps/web/src/routes/backtest/+page.svelte:2297:24 A11y: A form label must be associated with a control.
+2295:                       </div>
+2296:                       <div class="limit">
+2297:                         <label>Limit</label>
+                              ^
+2298:                         <input type="number" min="1" max="2000" bind:value={queryLimit} />
+2299:                       </div>
+9:01:14 PM [vite-plugin-svelte] /Volumes/OWC/gulfchain/DeskOps/apps/web/src/routes/backtest/+page.svelte:2275:12 A11y: <div> with dragstart, dragover, drop, dragend handlers must have an ARIA role
+2273:         {#if viewConfig.panels[panelId]}
+2274:           {#if panelId === 'advanced'}
+2275:             <div
+                  ^
+2276:               class="panel-wrap"
+2277:               draggable="true"
+9:01:14 PM [vite-plugin-svelte] /Volumes/OWC/gulfchain/DeskOps/apps/web/src/routes/backtest/+page.svelte:2521:12 A11y: <div> with dragstart, dragover, drop, dragend handlers must have an ARIA role
+2519:             </div>
+2520:           {:else if panelId === 'llm'}
+2521:             <div
+                  ^
+2522:               class="panel-wrap"
+2523:               draggable="true"
+9:01:14 PM [vite-plugin-svelte] /Volumes/OWC/gulfchain/DeskOps/apps/web/src/routes/docs/+page.svelte:363:6 A11y: noninteractive element cannot have nonnegative tabIndex value
+361:   {:else}
+362:     <div class="layout">
+363:       <aside
+           ^
+364:         class="tree"
+365:         bind:this={treeEl}
+node_modules/@sveltejs/kit/src/runtime/client/client.js (5:23): "untrack" is not exported by "node_modules/svelte/src/runtime/index.js", imported by "node_modules/@sveltejs/kit/src/runtime/client/client.js".
+node_modules/@sveltejs/kit/src/runtime/client/client.js (332:26): "fork" is not exported by "node_modules/svelte/src/runtime/index.js", imported by "node_modules/@sveltejs/kit/src/runtime/client/client.js".
+node_modules/@sveltejs/kit/src/runtime/client/client.js (1171:30): "settled" is not exported by "node_modules/svelte/src/runtime/index.js", imported by "node_modules/@sveltejs/kit/src/runtime/client/client.js".
+✓ 124 modules transformed.
+rendering chunks...
+computing gzip size...
+.svelte-kit/output/client/_app/version.json                              0.03 kB │ gzip:  0.05 kB
+.svelte-kit/output/client/.vite/manifest.json                            9.78 kB │ gzip:  1.15 kB
+.svelte-kit/output/client/_app/immutable/assets/7.6CtW8tMf.css           0.13 kB │ gzip:  0.12 kB
+.svelte-kit/output/client/_app/immutable/assets/6.D7dL2_4t.css           0.26 kB │ gzip:  0.18 kB
+.svelte-kit/output/client/_app/immutable/assets/8.B30Qmkax.css           0.43 kB │ gzip:  0.25 kB
+.svelte-kit/output/client/_app/immutable/assets/2.CZGzb_XX.css           1.10 kB │ gzip:  0.47 kB
+.svelte-kit/output/client/_app/immutable/assets/LLMPanel.DJfxvClO.css    1.72 kB │ gzip:  0.63 kB
+.svelte-kit/output/client/_app/immutable/assets/11.BL15zE5P.css          2.73 kB │ gzip:  0.79 kB
+.svelte-kit/output/client/_app/immutable/assets/16.xnirpWZg.css          2.82 kB │ gzip:  0.78 kB
+.svelte-kit/output/client/_app/immutable/assets/5.BpdX3snI.css           3.12 kB │ gzip:  0.87 kB
+.svelte-kit/output/client/_app/immutable/assets/3.WTsAomgw.css           3.37 kB │ gzip:  0.97 kB
+.svelte-kit/output/client/_app/immutable/assets/10.D9xcyutQ.css          3.68 kB │ gzip:  0.96 kB
+.svelte-kit/output/client/_app/immutable/assets/0.bfu1X3aW.css           4.31 kB │ gzip:  1.40 kB
+.svelte-kit/output/client/_app/immutable/assets/9.DL9vFQVv.css           5.09 kB │ gzip:  1.26 kB
+.svelte-kit/output/client/_app/immutable/assets/14.CUnJkIQg.css         10.23 kB │ gzip:  1.80 kB
+.svelte-kit/output/client/_app/immutable/assets/13.3TnLSh2F.css         10.38 kB │ gzip:  1.78 kB
+.svelte-kit/output/client/_app/immutable/assets/15.DgH1U6hX.css         15.43 kB │ gzip:  2.78 kB
+.svelte-kit/output/client/_app/immutable/assets/4.BWhdgDuz.css          17.14 kB │ gzip:  2.99 kB
+.svelte-kit/output/client/_app/immutable/assets/12.DvDSObgE.css         17.52 kB │ gzip:  2.66 kB
+.svelte-kit/output/client/_app/immutable/entry/start.BFE8vV_u.js         0.08 kB │ gzip:  0.09 kB
+.svelte-kit/output/client/_app/immutable/chunks/D0QH3NT1.js              0.09 kB │ gzip:  0.08 kB
+.svelte-kit/output/client/_app/immutable/chunks/CYDB31CY.js              0.23 kB │ gzip:  0.16 kB
+.svelte-kit/output/client/_app/immutable/nodes/7.DI3s8_So.js             0.61 kB │ gzip:  0.41 kB
+.svelte-kit/output/client/_app/immutable/nodes/6.38fM7yF2.js             0.74 kB │ gzip:  0.47 kB
+.svelte-kit/output/client/_app/immutable/nodes/1.BFg5rKkn.js             0.82 kB │ gzip:  0.50 kB
+.svelte-kit/output/client/_app/immutable/chunks/DioZ3ytM.js              0.85 kB │ gzip:  0.53 kB
+.svelte-kit/output/client/_app/immutable/nodes/2.VWUvnCT4.js             1.52 kB │ gzip:  0.77 kB
+.svelte-kit/output/client/_app/immutable/nodes/8.DCut8DGE.js             1.53 kB │ gzip:  0.80 kB
+.svelte-kit/output/client/_app/immutable/chunks/HOExBdWd.js              2.07 kB │ gzip:  0.72 kB
+.svelte-kit/output/client/_app/immutable/chunks/B7c40H5d.js              2.28 kB │ gzip:  1.07 kB
+.svelte-kit/output/client/_app/immutable/nodes/3.Bvx5osuJ.js             5.41 kB │ gzip:  2.01 kB
+.svelte-kit/output/client/_app/immutable/chunks/CvC2usAF.js              7.82 kB │ gzip:  3.18 kB
+.svelte-kit/output/client/_app/immutable/entry/app.Cyt-ENxL.js           9.06 kB │ gzip:  3.38 kB
+.svelte-kit/output/client/_app/immutable/nodes/0.DpWa3t_O.js            11.21 kB │ gzip:  4.26 kB
+.svelte-kit/output/client/_app/immutable/nodes/11.BVCs8Zu9.js           14.45 kB │ gzip:  5.42 kB
+.svelte-kit/output/client/_app/immutable/nodes/16.C-cNOXrT.js           14.64 kB │ gzip:  4.90 kB
+.svelte-kit/output/client/_app/immutable/chunks/7E5OkD1S.js             16.71 kB │ gzip:  5.99 kB
+.svelte-kit/output/client/_app/immutable/nodes/5.bkfwd4E0.js            19.21 kB │ gzip:  5.90 kB
+.svelte-kit/output/client/_app/immutable/nodes/10.CuKwQifG.js           21.86 kB │ gzip:  6.73 kB
+.svelte-kit/output/client/_app/immutable/nodes/9.DDTCkPMv.js            26.54 kB │ gzip:  9.03 kB
+.svelte-kit/output/client/_app/immutable/chunks/CBAegpA5.js             27.10 kB │ gzip: 10.52 kB
+.svelte-kit/output/client/_app/immutable/nodes/14.BA-YcTz_.js           32.82 kB │ gzip: 10.12 kB
+.svelte-kit/output/client/_app/immutable/nodes/13.DVKPDaw8.js           34.23 kB │ gzip: 10.44 kB
+.svelte-kit/output/client/_app/immutable/nodes/15.DVjNVveH.js           43.41 kB │ gzip: 14.27 kB
+.svelte-kit/output/client/_app/immutable/nodes/12.UER1affH.js           53.12 kB │ gzip: 15.73 kB
+.svelte-kit/output/client/_app/immutable/nodes/4.CMXE19Il.js           198.67 kB │ gzip: 48.74 kB
+✓ built in 1.70s
+.svelte-kit/output/server/.vite/manifest.json                                                   14.57 kB
+.svelte-kit/output/server/_app/immutable/assets/_page.6CtW8tMf.css                               0.13 kB
+.svelte-kit/output/server/_app/immutable/assets/_page.D7dL2_4t.css                               0.26 kB
+.svelte-kit/output/server/_app/immutable/assets/_page.B30Qmkax.css                               0.43 kB
+.svelte-kit/output/server/_app/immutable/assets/_page.CZGzb_XX.css                               1.10 kB
+.svelte-kit/output/server/_app/immutable/assets/LLMPanel.DJfxvClO.css                            1.72 kB
+.svelte-kit/output/server/_app/immutable/assets/_page.BL15zE5P.css                               2.73 kB
+.svelte-kit/output/server/_app/immutable/assets/_page.xnirpWZg.css                               2.82 kB
+.svelte-kit/output/server/_app/immutable/assets/_page.BpdX3snI.css                               3.12 kB
+.svelte-kit/output/server/_app/immutable/assets/_page.WTsAomgw.css                               3.37 kB
+.svelte-kit/output/server/_app/immutable/assets/_page.D9xcyutQ.css                               3.68 kB
+.svelte-kit/output/server/_app/immutable/assets/_layout.yBjqQ5DI.css                             4.27 kB
+.svelte-kit/output/server/_app/immutable/assets/_page.DL9vFQVv.css                               5.09 kB
+.svelte-kit/output/server/_app/immutable/assets/_page.CUnJkIQg.css                              10.23 kB
+.svelte-kit/output/server/_app/immutable/assets/_page.3TnLSh2F.css                              10.38 kB
+.svelte-kit/output/server/_app/immutable/assets/_page.DgH1U6hX.css                              15.43 kB
+.svelte-kit/output/server/_app/immutable/assets/_page.BWhdgDuz.css                              17.14 kB
+.svelte-kit/output/server/_app/immutable/assets/_page.DLD8lHOX.css                              17.46 kB
+.svelte-kit/output/server/chunks/ssr2.js                                                         0.10 kB
+.svelte-kit/output/server/chunks/shared-server.js                                                0.28 kB
+.svelte-kit/output/server/internal.js                                                            0.38 kB
+.svelte-kit/output/server/entries/fallbacks/error.svelte.js                                      0.47 kB
+.svelte-kit/output/server/chunks/environment.js                                                  0.62 kB
+.svelte-kit/output/server/chunks/mysticPaths.js                                                  0.71 kB
+.svelte-kit/output/server/entries/endpoints/api/mystic/workspace/_server.js                      0.82 kB
+.svelte-kit/output/server/entries/endpoints/api/backtests/schema/_server.js                      0.87 kB
+.svelte-kit/output/server/entries/endpoints/api/backtests/schema-profile/_server.js              0.87 kB
+.svelte-kit/output/server/entries/endpoints/api/backtests/query/_server.js                       0.92 kB
+.svelte-kit/output/server/entries/endpoints/api/metadata/_page_/_server.js                       0.97 kB
+.svelte-kit/output/server/chunks/stores.js                                                       0.98 kB
+.svelte-kit/output/server/entries/endpoints/api/fastapi/_...path_/_server.js                     1.00 kB
+.svelte-kit/output/server/chunks/utils.js                                                        1.15 kB
+.svelte-kit/output/server/entries/pages/communities/_page.svelte.js                              1.17 kB
+.svelte-kit/output/server/chunks/gulfchainRoot.js                                                1.22 kB
+.svelte-kit/output/server/chunks/gulfSync.js                                                     1.45 kB
+.svelte-kit/output/server/chunks/api.js                                                          1.69 kB
+.svelte-kit/output/server/entries/pages/charts/_page.svelte.js                                   1.88 kB
+.svelte-kit/output/server/entries/endpoints/api/docs/tree/_server.js                             2.40 kB
+.svelte-kit/output/server/entries/endpoints/api/docs/file/_server.js                             2.42 kB
+.svelte-kit/output/server/entries/endpoints/api/mystic/file/_server.js                           2.45 kB
+.svelte-kit/output/server/entries/endpoints/api/backtests/artifacts/file/_server.js              2.65 kB
+.svelte-kit/output/server/entries/pages/console/_page.svelte.js                                  3.38 kB
+.svelte-kit/output/server/entries/endpoints/api/quant/_server.js                                 3.55 kB
+.svelte-kit/output/server/entries/endpoints/api/mystic/photo/_server.js                          3.88 kB
+.svelte-kit/output/server/chunks/ssr.js                                                          4.12 kB
+.svelte-kit/output/server/entries/endpoints/api/gulf-sync/action/_server.js                      5.16 kB
+.svelte-kit/output/server/chunks/exports.js                                                      5.54 kB
+.svelte-kit/output/server/chunks/internal.js                                                     5.74 kB
+.svelte-kit/output/server/entries/pages/_page.svelte.js                                          6.13 kB
+.svelte-kit/output/server/entries/endpoints/api/backtests/walk-forward-visuals/_server.js        7.22 kB
+.svelte-kit/output/server/entries/endpoints/api/backtests/run/_server.js                         9.02 kB
+.svelte-kit/output/server/entries/endpoints/api/backtests/artifacts/_server.js                   9.16 kB
+.svelte-kit/output/server/entries/endpoints/api/backtests/runs/_server.js                        9.68 kB
+.svelte-kit/output/server/entries/endpoints/api/gulf-sync/live/_server.js                       14.41 kB
+.svelte-kit/output/server/entries/pages/gulf-sync/control/_page.svelte.js                       15.24 kB
+.svelte-kit/output/server/entries/pages/walk-forward-visuals/_page.svelte.js                    15.51 kB
+.svelte-kit/output/server/remote-entry.js                                                       18.96 kB
+.svelte-kit/output/server/entries/pages/about/_page.svelte.js                                   21.35 kB
+.svelte-kit/output/server/entries/pages/_layout.svelte.js                                       21.70 kB
+.svelte-kit/output/server/chunks/LLMPanel.js                                                    24.90 kB
+.svelte-kit/output/server/entries/pages/backtest/artifacts/_run_id_/_page.svelte.js             25.91 kB
+.svelte-kit/output/server/chunks/shared.js                                                      26.00 kB
+.svelte-kit/output/server/entries/pages/gulf-sync/_page.svelte.js                               26.58 kB
+.svelte-kit/output/server/entries/endpoints/api/mystic/dashboard/_server.js                     28.54 kB
+.svelte-kit/output/server/entries/pages/docs/_page.svelte.js                                    30.25 kB
+.svelte-kit/output/server/entries/pages/mystic-pools/technicians/_technician_/_page.svelte.js   42.40 kB
+.svelte-kit/output/server/entries/pages/mystic-pools/customers/_customer_/_page.svelte.js       42.78 kB
+.svelte-kit/output/server/entries/pages/quant/_page.svelte.js                                   63.91 kB
+.svelte-kit/output/server/entries/pages/mystic-pools/_page.svelte.js                            71.24 kB
+.svelte-kit/output/server/index.js                                                             124.31 kB
+.svelte-kit/output/server/entries/pages/backtest/_page.svelte.js                               195.75 kB
+✓ built in 3.20s
+
+Run npm run preview to preview your production build locally.
+
+> Using @sveltejs/adapter-auto
+  Could not detect a supported production environment. See https://svelte.dev/docs/kit/adapters to learn how to configure your app to run on the platform of your choosing
+  ✔ done

@@ -5,6 +5,7 @@ export default defineConfig({
   plugins: [sveltekit()],
   server: {
     host: '127.0.0.1',
-    port: 8888
+    port: 8888,
+    allowedHosts: ['mac-mini.local']
   }
 });

@@ -4,10 +4,43 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 RUN_DIR="$ROOT/.run"
 PY_VERSION_REQUIRED="3.11"
+BACKTEST_ROOT="${BACKTEST_ROOT:-${MULTIGATE_ROOT:-$ROOT/../multigate-backtest}}"
+BACKTEST_API_HOST="${BACKTEST_API_HOST:-127.0.0.1}"
+BACKTEST_API_PORT="${BACKTEST_API_PORT:-8765}"
+
+usage() {
+  cat <<'EOF'
+Usage: ./deskops [command]
+
+Default: live
+
+Commands:
+  setup     Install dependencies (Go, Python venv, web npm).
+  up        Start backtest API, api, fastapi, and web (with preflight checks).
+  live      Start services and tail logs (Ctrl+C stops).
+  down      Stop all services.
+  restart   Down then up.
+  logs      Tail service logs.
+  status    Show service status.
+  migrate   Run DB migrations.
+  metadata  Build metadata indices.
+  preflight Check dependencies (optional mode: all|web|fastapi|api|backtest-api|db).
+  doctor    Diagnose and optionally fix common issues.
+  clean     Remove run/log dirs and build artifacts.
+  reset     Hard reset data and dependencies (destructive).
+  help      Show this help.
+EOF
+}
 
 load_env() {
   # Environment is expected to be provided by direnv (.envrc).
   :
+}
+
+configure_backtest_api() {
+  BACKTEST_API_BASE="${BACKTEST_API_BASE:-http://${BACKTEST_API_HOST}:${BACKTEST_API_PORT}}"
+  BACKTEST_API_URL="${BACKTEST_API_URL:-$BACKTEST_API_BASE}"
+  export BACKTEST_API_BASE BACKTEST_API_URL
 }
 
 ensure_run_dir() {
@@ -93,12 +126,49 @@ check_node() {
   return 0
 }
 
+sveltekit_cache_corrupt() {
+  local tsconfig="$ROOT/apps/web/.svelte-kit/tsconfig.json"
+  [[ -d "$ROOT/apps/web/.svelte-kit" && ! -s "$tsconfig" ]]
+}
+
 check_sveltekit_cache() {
   if is_running "web"; then
     if [[ ! -d "$ROOT/apps/web/.svelte-kit" ]]; then
       echo "SvelteKit cache missing while web is running."
       return 1
     fi
+  fi
+  if sveltekit_cache_corrupt; then
+    echo "SvelteKit cache is corrupted (.svelte-kit/tsconfig.json is empty)."
+    return 1
+  fi
+  return 0
+}
+
+repair_sveltekit_cache() {
+  local web_root="$ROOT/apps/web"
+  local tsconfig="$web_root/.svelte-kit/tsconfig.json"
+  local sync_bin="$web_root/node_modules/.bin/svelte-kit"
+
+  if [[ -s "$tsconfig" ]]; then
+    return 0
+  fi
+
+  if [[ ! -x "$sync_bin" ]]; then
+    echo "Missing SvelteKit binary: run 'make setup' (npm install)."
+    return 1
+  fi
+
+  echo "Regenerating SvelteKit cache..."
+  rm -rf "$web_root/.svelte-kit"
+  (
+    cd "$web_root"
+    "$sync_bin" sync
+  )
+
+  if [[ ! -s "$tsconfig" ]]; then
+    echo "Failed to regenerate SvelteKit cache."
+    return 1
   fi
   return 0
 }
@@ -168,6 +238,27 @@ check_fastapi_deps() {
   return 0
 }
 
+check_backtest_api_deps() {
+  local py="$BACKTEST_ROOT/.venv/bin/python"
+  if [[ ! -d "$BACKTEST_ROOT" ]]; then
+    echo "Missing multigate-backtest repo: $BACKTEST_ROOT"
+    return 1
+  fi
+  if [[ ! -x "$py" ]]; then
+    echo "Missing multigate-backtest .venv: create it in $BACKTEST_ROOT and install requirements."
+    return 1
+  fi
+  if [[ ! -f "$BACKTEST_ROOT/scripts/db_tool.py" ]]; then
+    echo "Missing backtest API script: $BACKTEST_ROOT/scripts/db_tool.py"
+    return 1
+  fi
+  if [[ ! -f "$BACKTEST_ROOT/runs/backtests.sqlite" ]]; then
+    echo "Missing backtest SQLite DB: $BACKTEST_ROOT/runs/backtests.sqlite"
+    return 1
+  fi
+  return 0
+}
+
 check_db_env() {
   if [[ -z "${DATABASE_URL:-}" ]]; then
     echo "DATABASE_URL is required (set it in .envrc)."
@@ -176,12 +267,26 @@ check_db_env() {
   return 0
 }
 
+check_api_data_source() {
+  configure_backtest_api
+  if [[ -n "${DATABASE_URL:-}" ]]; then
+    return 0
+  fi
+  if [[ -n "${BACKTEST_API_BASE:-}" ]]; then
+    echo "DATABASE_URL is not set; DeskOps API will use $BACKTEST_API_BASE."
+    return 0
+  fi
+  echo "Either DATABASE_URL or BACKTEST_API_BASE is required."
+  return 1
+}
+
 preflight() {
   local mode="${1:-all}"
   local ok=0
   case "$mode" in
     web)
       check_node || ok=1
+      check_sveltekit_cache || ok=1
       ;;
     fastapi)
       check_venv
@@ -195,14 +300,19 @@ preflight() {
     api)
       require_cmd go || ok=1
       check_go_deps || ok=1
+      check_api_data_source || ok=1
+      ;;
+    backtest-api)
+      check_backtest_api_deps || ok=1
       ;;
     db)
       check_db_env || ok=1
       ;;
     all)
+      check_backtest_api_deps || ok=1
       require_cmd go || ok=1
       check_go_deps || ok=1
-      check_db_env || ok=1
+      check_api_data_source || ok=1
       check_venv
       case "$?" in
         0) ;;
@@ -211,6 +321,7 @@ preflight() {
       esac
       check_fastapi_deps || ok=1
       check_node || ok=1
+      check_sveltekit_cache || ok=1
       ;;
     *)
       echo "Unknown preflight mode: $mode"
@@ -234,7 +345,7 @@ doctor() {
   if ! check_node; then issues=$((issues+1)); fi
   if ! check_sveltekit_cache; then issues=$((issues+1)); fi
   if ! require_cmd psql; then issues=$((issues+1)); fi
-  if ! check_db_env; then issues=$((issues+1)); fi
+  if ! check_api_data_source; then issues=$((issues+1)); fi
 
   check_venv
   venv_status=$?
@@ -243,6 +354,7 @@ doctor() {
   fi
 
   if ! check_fastapi_deps; then issues=$((issues+1)); fi
+  if ! check_backtest_api_deps; then issues=$((issues+1)); fi
 
   if command -v pg_isready >/dev/null 2>&1; then
     if pg_isready >/dev/null 2>&1; then
@@ -283,10 +395,20 @@ doctor() {
     fi
   fi
 
-  if is_running "web" && [[ ! -d "$ROOT/apps/web/.svelte-kit" ]]; then
+  if sveltekit_cache_corrupt; then
+    local web_was_running=0
+    if is_running "web"; then
+      web_was_running=1
+      stop_service "web"
+    fi
+    repair_sveltekit_cache || true
+    if [[ "$web_was_running" -eq 1 ]]; then
+      start_service "web" "$ROOT/apps/web" "npm run dev -- --host ${WEB_HOST:-0.0.0.0} --port 8888"
+    fi
+  elif is_running "web" && [[ ! -d "$ROOT/apps/web/.svelte-kit" ]]; then
     stop_service "web"
     rm -rf "$ROOT/apps/web/.svelte-kit"
-    start_service "web" "$ROOT/apps/web" "npm run dev -- --host 127.0.0.1 --port 8888"
+    start_service "web" "$ROOT/apps/web" "npm run dev -- --host ${WEB_HOST:-0.0.0.0} --port 8888"
   fi
 
   if [[ "$venv_status" -ne 0 ]]; then
@@ -361,6 +483,9 @@ reset_db() {
 }
 
 case "${1:-live}" in
+  -h|--help|help)
+    usage
+    ;;
   setup)
     (cd "$ROOT/apps/api" && go mod tidy)
     ensure_python_venv
@@ -368,17 +493,21 @@ case "${1:-live}" in
     ;;
   up)
     load_env
+    configure_backtest_api
+    check_node || exit 1
+    repair_sveltekit_cache || exit 1
     preflight all || exit 1
     check_db || true
-    start_service "api" "$ROOT/apps/api" "go run ./cmd/server"
+    start_service "backtest-api" "$BACKTEST_ROOT" "\"$BACKTEST_ROOT/.venv/bin/python\" scripts/db_tool.py web --host \"$BACKTEST_API_HOST\" --port \"$BACKTEST_API_PORT\""
+    start_service "api" "$ROOT/apps/api" "BACKTEST_API_BASE=\"$BACKTEST_API_BASE\" BACKTEST_API_URL=\"$BACKTEST_API_URL\" go run ./cmd/server"
     start_service "fastapi" "$ROOT/services/fastapi" ". \"$ROOT/.venv/bin/activate\" && uvicorn app.main:app --reload --host 127.0.0.1 --port 8090"
-    start_service "web" "$ROOT/apps/web" "npm run dev -- --host 127.0.0.1 --port 8888"
+    start_service "web" "$ROOT/apps/web" "npm run dev -- --host ${WEB_HOST:-0.0.0.0} --port 8888"
     echo "Logs: $RUN_DIR/*.log"
     ;;
   live)
     "$0" up
     ensure_run_dir
-    touch "$RUN_DIR/api.log" "$RUN_DIR/fastapi.log" "$RUN_DIR/web.log"
+    touch "$RUN_DIR/backtest-api.log" "$RUN_DIR/api.log" "$RUN_DIR/fastapi.log" "$RUN_DIR/web.log"
     echo "Tailing logs (Ctrl+C to stop)..."
     trap '"$0" down; exit 0' INT TERM
     tail -n 200 -f "$RUN_DIR"/*.log
@@ -387,6 +516,7 @@ case "${1:-live}" in
     stop_service "web"
     stop_service "fastapi"
     stop_service "api"
+    stop_service "backtest-api"
     ;;
   restart)
     "$0" down
@@ -397,6 +527,7 @@ case "${1:-live}" in
     tail -n 200 -f "$RUN_DIR"/*.log
     ;;
   status)
+    status_service "backtest-api"
     status_service "api"
     status_service "fastapi"
     status_service "web"
@@ -441,7 +572,7 @@ case "${1:-live}" in
     reset_db || true
     ;;
   *)
-    echo "Usage: ./deskops [live|setup|up|down|restart|logs|status|migrate|metadata|clean|reset|doctor|preflight]"
+    usage
     exit 1
     ;;
 esac

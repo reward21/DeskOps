@@ -11,13 +11,35 @@
   const logoDarkSrc = '/gulfchain2.png';
   const logoLightSrc = '/gulfchain1.png';
 
-  const toggleTheme = () => {
-    theme = theme === 'dark' ? 'light' : 'dark';
+  const THEME_KEY = 'deskops.ui.theme';
+
+  const applyTheme = (next) => {
+    theme = next === 'light' ? 'light' : 'dark';
     document.documentElement.setAttribute('data-theme', theme);
+    if (typeof localStorage !== 'undefined') {
+      try {
+        localStorage.setItem(THEME_KEY, theme);
+      } catch (err) {
+        // Ignore storage errors (private mode, quota, etc.).
+      }
+    }
+  };
+
+  const toggleTheme = () => {
+    const next = theme === 'dark' ? 'light' : 'dark';
+    applyTheme(next);
   };
 
   onMount(() => {
-    document.documentElement.setAttribute('data-theme', theme);
+    let saved = '';
+    if (typeof localStorage !== 'undefined') {
+      try {
+        saved = String(localStorage.getItem(THEME_KEY) || '').trim();
+      } catch (err) {
+        saved = '';
+      }
+    }
+    applyTheme(saved || theme);
   });
 </script>
 

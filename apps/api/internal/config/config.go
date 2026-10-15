@@ -3,6 +3,7 @@ package config
 import (
 	"fmt"
 	"os"
+	"strings"
 )
 
 type Config struct {
@@ -17,8 +18,8 @@ func Load() (Config, error) {
 		DatabaseURL: os.Getenv("DATABASE_URL"),
 		BacktestAPI: envOrFirst("BACKTEST_API_BASE", "BACKTEST_API_URL"),
 	}
-	if cfg.DatabaseURL == "" {
-		return Config{}, fmt.Errorf("DATABASE_URL is required")
+	if strings.TrimSpace(cfg.DatabaseURL) == "" && strings.TrimSpace(cfg.BacktestAPI) == "" {
+		return Config{}, fmt.Errorf("either DATABASE_URL or BACKTEST_API_BASE/BACKTEST_API_URL is required")
 	}
 	return cfg, nil
 }

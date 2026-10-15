@@ -75,7 +75,7 @@ fastapi:
 
 web:
 	@./deskops preflight web
-	@cd apps/web && npm run dev -- --host 127.0.0.1 --port 8888
+	@cd apps/web && npm run dev -- --host $(WEB_HOST) --port 8888
 
 build:
 	@./deskops preflight web
